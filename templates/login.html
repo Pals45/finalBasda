@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Aplikasi Praktikum</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/output.css') }}" />
+</head>
+<body class="flex h-screen">
+
+    <!-- Kiri: Informasi Welcome -->
+    <div class="w-1/2 bg-gradient-to-r from-purple-500 to-purple-700 text-white p-10 flex flex-col justify-center">
+        <h1 class="text-4xl font-bold">Aplikasi Penjadwalan Praktikum</h1>
+        <p class="mt-4 text-lg">Silakan login sebagai Admin, Mahasiswa, atau Dosen untuk melanjutkan ke dashboard masing-masing.</p>
+    </div>
+
+    <!-- Kanan: Form Login -->
+    <div class="w-1/2 bg-white p-10 flex flex-col justify-center">
+        <h2 class="text-2xl font-semibold mb-6">USER LOGIN</h2>
+
+        {% if error %}
+        <div class="mb-4 text-sm text-red-600 bg-red-100 p-2 rounded">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" id="username" name="username" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required />
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required />
+            </div>
+
+            <div class="flex items-center mb-4">
+                <input type="checkbox" id="remember" name="remember" class="mr-2" />
+                <label for="remember" class="text-sm text-gray-600">Remember me</label>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white py-2 rounded-md hover:opacity-90 transition">LOGIN</button>
+
+            <p class="mt-4 text-sm text-gray-600 text-center"><a href="#" class="text-purple-500 hover:underline">Lupa password?</a></p>
+        </form>
+    </div>
+
+</body>
+</html>

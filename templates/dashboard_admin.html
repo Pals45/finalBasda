@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='dist/output.css') }}">
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+
+  <!-- Sidebar -->
+  <div class="flex">
+    <aside class="w-64 bg-white shadow-md h-screen fixed">
+      <div class="p-6">
+        <h2 class="text-2xl font-bold text-purple-700">Admin</h2>
+        <p class="text-sm text-gray-500">Panel Pengelolaan</p>
+      </div>
+      <nav class="px-4">
+        <ul class="space-y-2">
+          <li><a href="#" class="block py-2 px-4 rounded hover:bg-purple-100 text-purple-700 font-semibold">Jadwal Praktikum</a></li>
+          <li><a href="#" class="block py-2 px-4 rounded hover:bg-purple-100">Data Mahasiswa</a></li>
+          <li><a href="#" class="block py-2 px-4 rounded hover:bg-purple-100">Data Dosen</a></li>
+          <li><a href="#" class="block py-2 px-4 rounded hover:bg-purple-100">Laporan Masuk</a></li>
+          <li><a href="{{ url_for('logout') }}" class="block py-2 px-4 text-red-500 hover:bg-red-100">Logout</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 flex-1 p-8">
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold text-purple-700">Selamat datang, {{ session['username'] }}!</h1>
+        <p class="text-gray-600">Ini adalah panel admin untuk mengelola sistem penjadwalan praktikum online.</p>
+      </div>
+
+      <!-- Ringkasan Statistik -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h2 class="text-sm font-semibold text-gray-600">Jumlah Mahasiswa</h2>
+          <p class="text-3xl font-bold text-purple-700 mt-2">120</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h2 class="text-sm font-semibold text-gray-600">Jumlah Dosen</h2>
+          <p class="text-3xl font-bold text-purple-700 mt-2">15</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h2 class="text-sm font-semibold text-gray-600">Total Laporan</h2>
+          <p class="text-3xl font-bold text-purple-700 mt-2">340</p>
+        </div>
+      </div>
+
+      <!-- Jadwal Praktikum -->
+      <section class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Daftar Jadwal Praktikum</h2>
+        <table class="w-full text-left">
+          <thead class="text-sm text-gray-600 border-b">
+            <tr>
+              <th class="py-2">Mata Praktikum</th>
+              <th class="py-2">Hari</th>
+              <th class="py-2">Jam</th>
+              <th class="py-2">Dosen</th>
+              <th class="py-2">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b hover:bg-gray-50">
+              <td class="py-2">Pemrograman Web</td>
+              <td>Senin</td>
+              <td>09:00 - 11:00</td>
+              <td>Bapak Yusuf</td>
+              <td><button class="text-sm text-blue-600 hover:underline">Edit</button></td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="py-2">Jaringan Komputer</td>
+              <td>Rabu</td>
+              <td>13:00 - 15:00</td>
+              <td>Ibu Sari</td>
+              <td><button class="text-sm text-blue-600 hover:underline">Edit</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

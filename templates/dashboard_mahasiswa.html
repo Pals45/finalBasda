@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Mahasiswa</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='dist/output.css') }}" />
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+
+  <!-- Sidebar -->
+  <div class="flex">
+    <aside class="w-64 bg-white shadow-md h-screen fixed">
+      <div class="p-6">
+        <h2 class="text-2xl font-bold text-purple-700">Mahasiswa</h2>
+        <p class="mt-1 text-sm text-gray-500">Dashboard Praktikum</p>
+      </div>
+      <nav class="px-4">
+        <ul class="space-y-2">
+          <li><a href="#" class="block py-2 px-4 rounded hover:bg-purple-100 text-purple-700 font-semibold">Jadwal</a></li>
+          <li><a href="#" class="block py-2 px-4 rounded hover:bg-purple-100">Progress Laporan</a></li>
+          <li><a href="#" class="block py-2 px-4 rounded hover:bg-purple-100">Kehadiran</a></li>
+          <li><a href="{{ url_for('logout') }}" class="block py-2 px-4 text-red-500 hover:bg-red-100">Logout</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 flex-1 p-8">
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold text-purple-700">Selamat datang, {{ session['username'] }}!</h1>
+        <p class="text-gray-600">Berikut ini adalah ringkasan kegiatan praktikum kamu.</p>
+      </div>
+
+      <!-- Jadwal Praktikum -->
+      <section class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Jadwal Praktikum</h2>
+        <table class="w-full text-left">
+          <thead class="text-sm text-gray-600 border-b">
+            <tr>
+              <th class="py-2">Mata Praktikum</th>
+              <th class="py-2">Hari</th>
+              <th class="py-2">Jam</th>
+              <th class="py-2">Pembimbing</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b hover:bg-gray-50">
+              <td class="py-2">Pemrograman Web</td>
+              <td>Senin</td>
+              <td>09:00 - 11:00</td>
+              <td>Bapak Yusuf</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="py-2">Jaringan Komputer</td>
+              <td>Rabu</td>
+              <td>13:00 - 15:00</td>
+              <td>Ibu Sari</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Upload Laporan -->
+      <section class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Unggah Laporan</h2>
+        <form>
+          <input type="file" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 mb-4" />
+          <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded">Upload</button>
+        </form>
+      </section>
+
+      <!-- Progress -->
+      <section class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold mb-4">Progress Laporan</h2>
+        <div class="bg-gray-200 rounded-full h-4 mb-2 w-full">
+          <div class="bg-purple-600 h-4 rounded-full" style="width: 60%;"></div>
+        </div>
+        <p class="text-sm text-gray-600">60% selesai</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
