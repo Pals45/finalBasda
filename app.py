@@ -107,59 +107,59 @@ def data_dosen():
 def tambah_dosen():
     # Untuk saat ini hanya redirect ulang, simpan data di database jika ingin dinamis
     return redirect(url_for('data_dosen'))
-@app.route('/add_user', methods=['GET', 'POST'])
-def add_user():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        jurusan = request.form['jurusan']
-        nim = request.form['nim']
+# @app.route('/add_user', methods=['GET', 'POST'])
+# def add_user():
+#     if request.method == 'POST':
+#         name = request.form['name']
+#         email = request.form['email']
+#         jurusan = request.form['jurusan']
+#         nim = request.form['nim']
 
-        # Jika role Mahasiswa, nidn kosongkan
+#         # Jika role Mahasiswa, nidn kosongkan
         
 
-        user = {
-            'name': name,
-            'email': email,
-            'passwordHash': nim,
-            'jurusan': jurusan,
-            'role': 'Mahasiswa',
-            'nim': nim,
-            'nidn': '',
-            'createdAt': datetime.utcnow()
-        }
+#         user = {
+#             'name': name,
+#             'email': email,
+#             'passwordHash': nim,
+#             'jurusan': jurusan,
+#             'role': 'Mahasiswa',
+#             'nim': nim,
+#             'nidn': '',
+#             'createdAt': datetime.utcnow()
+#         }
 
-        db.users.insert_one(user)
-        return redirect(url_for('data_mahasiswa'))
+#         db.users.insert_one(user)
+#         return redirect(url_for('data_mahasiswa'))
 
-    return render_template('add_user.html')
+#     return render_template('add_user.html')
 
-@app.route('/add_user', methods=['GET', 'POST'])
-def add_user():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        jurusan = request.form['jurusan']
-        nim = request.form['nipn']
+# @app.route('/add_user', methods=['GET', 'POST'])
+# def add_user():
+#     if request.method == 'POST':
+#         name = request.form['name']
+#         email = request.form['email']
+#         jurusan = request.form['jurusan']
+#         nim = request.form['nipn']
 
-        # Jika role Mahasiswa, nidn kosongkan
+#         # Jika role Mahasiswa, nidn kosongkan
         
 
-        user = {
-            'name': name,
-            'email': email,
-            'passwordHash': nim,
-            'jurusan': jurusan,
-            'role': 'Mahasiswa',
-            'nim': nim,
-            'nidn': '',
-            'createdAt': datetime.utcnow()
-        }
+#         user = {
+#             'name': name,
+#             'email': email,
+#             'passwordHash': nim,
+#             'jurusan': jurusan,
+#             'role': 'Mahasiswa',
+#             'nim': nim,
+#             'nidn': '',
+#             'createdAt': datetime.utcnow()
+#         }
 
-        db.users.insert_one(user)
-        return redirect(url_for('data_mahasiswa'))
+#         db.users.insert_one(user)
+#         return redirect(url_for('data_mahasiswa'))
 
-    return render_template('add_user.html')
+#     return render_template('add_user.html')
 
 
 if __name__ == '__main__':
