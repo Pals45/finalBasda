@@ -1,79 +1,107 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Dosen</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='dist/output.css') }}">
-</head>
-<body class="bg-gray-100 text-gray-800 min-h-screen">
-  <div class="flex">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white shadow-md h-screen fixed">
-      <div class="p-6">
-        <h2 class="text-2xl font-bold text-purple-700">Dosen</h2>
-        <p class="mt-1 text-sm text-gray-500">Panel Bimbingan</p>
-      </div>
-      <nav class="px-4">
-        <ul class="space-y-2">
-          <li>
-            <a href="{{ url_for('dosen_dashboard') }}" class="block py-2 px-4 rounded bg-purple-100 text-purple-700 font-semibold">Jadwal Mengajar</a>
-          </li>
-          <li>
-            <a href="#" class="block py-2 px-4 rounded hover:bg-purple-100">Daftar Mahasiswa</a>
-          </li>
-          <li>
-            <a href="#" class="block py-2 px-4 rounded hover:bg-purple-100">Validasi Kehadiran</a>
-          </li>
-          <li>
-            <a href="{{ url_for('upload_tugas') }}" class="block py-2 px-4 rounded hover:bg-purple-100">Laporan/Tugas</a>
-          </li>
-          <li>
-            <a href="{{ url_for('logout') }}" class="block py-2 px-4 text-red-500 hover:bg-red-100">Logout</a>
-          </li>
-        </ul>
-      </nav>
-    </aside>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Dosen</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dist/output.css') }}"
+    />
+  </head>
+  <body class="bg-gray-100 text-gray-800 min-h-screen">
+    <div class="flex">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow-md h-screen fixed">
+        <div class="p-6">
+          <h2 class="text-2xl font-bold text-purple-700">Dosen</h2>
+          <p class="mt-1 text-sm text-gray-500">Panel Bimbingan</p>
+        </div>
+        <nav class="px-4">
+          <ul class="space-y-2">
+            <li>
+              <a
+                href="{{ url_for('dosen_dashboard') }}"
+                class="block py-2 px-4 rounded bg-purple-100 text-purple-700 font-semibold"
+                >Jadwal Mengajar</a
+              >
+            </li>
+            <li>
+              <a href="#" class="block py-2 px-4 rounded hover:bg-purple-100"
+                >Daftar Mahasiswa</a
+              >
+            </li>
+            <li>
+              <a href="#" class="block py-2 px-4 rounded hover:bg-purple-100"
+                >Validasi Kehadiran</a
+              >
+            </li>
+            <li>
+              <a
+                href="{{ url_for('upload_tugas') }}"
+                class="block py-2 px-4 rounded hover:bg-purple-100"
+                >Laporan/Tugas</a
+              >
+            </li>
+            <li>
+              <a
+                href="{{ url_for('daftar_tugas') }}"
+                class="block py-2 px-4 rounded hover:bg-purple-100"
+                >Daftar Tugas</a
+              >
+            </li>
+            <li>
+              <a
+                href="{{ url_for('logout') }}"
+                class="block py-2 px-4 text-red-500 hover:bg-red-100"
+                >Logout</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </aside>
 
-    <!-- Main Content -->
-    <main class="ml-64 flex-1 p-8">
-      <div class="mb-6">
-        <h1 class="text-3xl font-bold text-purple-700">Selamat datang, {{ session['username'] }}!</h1>
-        <p class="text-gray-600">Berikut ini adalah jadwal mengajar Anda.</p>
-      </div>
+      <!-- Main Content -->
+      <main class="ml-64 flex-1 p-8">
+        <div class="mb-6">
+          <h1 class="text-3xl font-bold text-purple-700">
+            Selamat datang, {{ session['username'] }}!
+          </h1>
+          <p class="text-gray-600">Berikut ini adalah jadwal mengajar Anda.</p>
+        </div>
 
-      <!-- Jadwal Mengajar -->
-      <section class="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 class="text-xl font-semibold mb-4">Jadwal Mengajar</h2>
-        <table class="w-full text-left">
-          <thead class="text-sm text-gray-600 border-b">
-            <tr>
-              <th class="py-2">Mata Praktikum</th>
-              <th class="py-2">Hari</th>
-              <th class="py-2">Jam</th>
-              <th class="py-2">Ruangan</th>
-              <th class="py-2">Kelas</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-b hover:bg-gray-50">
-              <td class="py-2">Pemrograman Web</td>
-              <td>Senin</td>
-              <td>09:00 - 11:00</td>
-              <td>Lab Komputer 1</td>
-              <td>IF-6A</td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="py-2">Jaringan Komputer</td>
-              <td>Rabu</td>
-              <td>13:00 - 15:00</td>
-              <td>Lab Komputer 2</td>
-              <td>SI-5B</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-    </main>
-  </div>
-</body>
+        <!-- Jadwal Mengajar -->
+        <section class="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 class="text-xl font-semibold mb-4">Jadwal Mengajar</h2>
+          <table class="w-full text-left">
+            <thead class="text-sm text-gray-600 border-b">
+              <tr>
+                <th class="py-2">Mata Praktikum</th>
+                <th class="py-2">Hari</th>
+                <th class="py-2">Jam</th>
+                <th class="py-2">Ruangan</th>
+                <th class="py-2">Kelas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b hover:bg-gray-50">
+                <td class="py-2">Pemrograman Web</td>
+                <td>Senin</td>
+                <td>09:00 - 11:00</td>
+                <td>Lab Komputer 1</td>
+                <td>IF-6A</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="py-2">Jaringan Komputer</td>
+                <td>Rabu</td>
+                <td>13:00 - 15:00</td>
+                <td>Lab Komputer 2</td>
+                <td>SI-5B</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+  </body>
 </html>

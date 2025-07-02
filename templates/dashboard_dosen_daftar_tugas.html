@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Tugas - Dosen</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dist/output.css') }}"
+    />
+  </head>
+  <body class="bg-gray-50 text-gray-800 min-h-screen font-sans">
+    <div class="flex">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow-md h-screen fixed">
+        <div class="p-6 border-b">
+          <h2 class="text-2xl font-bold text-purple-700">Dosen</h2>
+          <p class="mt-1 text-sm text-gray-500">Panel Bimbingan</p>
+        </div>
+        <nav class="px-4 py-4 space-y-2">
+          <a
+            href="{{ url_for('dosen_dashboard') }}"
+            class="block py-2 px-4 rounded transition duration-200 hover:bg-purple-100 hover:text-purple-700"
+            >Jadwal Mengajar</a
+          >
+          <a
+            href="#"
+            class="block py-2 px-4 rounded transition duration-200 hover:bg-purple-100 hover:text-purple-700"
+            >Daftar Mahasiswa</a
+          >
+          <a
+            href="#"
+            class="block py-2 px-4 rounded transition duration-200 hover:bg-purple-100 hover:text-purple-700"
+            >Validasi Kehadiran</a
+          >
+          <a
+            href="{{ url_for('upload_tugas') }}"
+            class="block py-2 px-4 rounded hover:bg-purple-100 hover:text-purple-700"
+            >Laporan/Tugas</a
+          >
+          <a
+            href="{{ url_for('daftar_tugas') }}"
+            class="block py-2 px-4 rounded bg-purple-100 text-purple-700 font-semibold"
+            >Daftar Kumpul</a
+          >
+          <a
+            href="{{ url_for('logout') }}"
+            class="block py-2 px-4 text-red-500 hover:bg-red-100 transition duration-200"
+            >Logout</a
+          >
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="ml-64 w-full p-10">
+        <!-- Tabel Tugas -->
+        <section class="bg-white p-8 rounded-xl shadow">
+          <h2 class="text-xl font-semibold text-purple-700 mb-4">
+            Daftar Tugas yang Diunggah
+          </h2>
+          {% if tugas_dosen %}
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left border-t">
+              <thead class="text-gray-600 bg-gray-100">
+                <tr>
+                  <th class="py-3 px-4">Judul</th>
+                  <th class="py-3 px-4">Deadline</th>
+                  <th class="py-3 px-4">File</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for tugas in tugas_dosen %}
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="py-3 px-4 font-medium">{{ tugas.judul }}</td>
+                  <td class="py-3 px-4">{{ tugas.deadline }}</td>
+                  <td class="py-3 px-4">
+                    <a
+                      href="{{ url_for('uploaded_file', filename=tugas.filename) }}"
+                      class="text-blue-600 hover:underline"
+                      target="_blank"
+                      >Lihat File</a
+                    >
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p class="text-gray-500">Belum ada tugas yang diunggah.</p>
+          {% endif %}
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

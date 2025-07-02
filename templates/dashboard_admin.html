@@ -1,112 +1,177 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Admin</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='dist/output.css') }}">
-</head>
-<body class="bg-gray-100 text-gray-800 min-h-screen">
-  <div class="flex">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white shadow-md h-screen fixed">
-      <div class="p-6">
-        <h2 class="text-2xl font-bold text-purple-700">Admin</h2>
-        <p class="text-sm text-gray-500">Panel Pengelolaan</p>
-      </div>
-      <nav class="px-4">
-        <ul class="space-y-2">
-          <li><a href="#" class="block py-2 px-4 rounded bg-purple-100 text-purple-700 font-semibold">Jadwal Praktikum</a></li>
-          <li><a href="{{ url_for('data_mahasiswa') }}" class="block py-2 px-4 rounded hover:bg-purple-100">Data Mahasiswa</a></li>
-          <li><a href="{{ url_for('data_dosen') }}" class="block py-2 px-4 rounded hover:bg-purple-100">Data Dosen</a></li>
-          <li><a href="{{ url_for('logout') }}" class="block py-2 px-4 text-red-500 hover:bg-red-100">Logout</a></li>
-        </ul>
-      </nav>
-    </aside>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Admin</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dist/output.css') }}"
+    />
+  </head>
+  <body class="bg-gray-100 text-gray-800 min-h-screen">
+    <div class="flex">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow-md h-screen fixed">
+        <div class="p-6">
+          <h2 class="text-2xl font-bold text-purple-700">Admin</h2>
+          <p class="text-sm text-gray-500">Panel Pengelolaan</p>
+        </div>
+        <nav class="px-4">
+          <ul class="space-y-2">
+            <li>
+              <a
+                href="{{ url_for('admin_dashboard') }}"
+                class="block py-2 px-4 rounded bg-purple-100 text-purple-700 font-semibold"
+                >Jadwal Praktikum</a
+              >
+            </li>
+            <li>
+              <a
+                href="{{ url_for('data_mahasiswa') }}"
+                class="block py-2 px-4 rounded hover:bg-purple-100"
+                >Data Mahasiswa</a
+              >
+            </li>
+            <li>
+              <a
+                href="{{ url_for('data_mata_kuliah') }}"
+                class="block py-2 px-4 rounded hover:bg-purple-100"
+                >Data Mata Kuliah</a
+              >
+            </li>
+            <li>
+              <a
+                href="{{ url_for('data_dosen') }}"
+                class="block py-2 px-4 rounded hover:bg-purple-100"
+                >Data Dosen</a
+              >
+            </li>
+            <li>
+              <a
+                href="{{ url_for('logout') }}"
+                class="block py-2 px-4 text-red-500 hover:bg-red-100"
+                >Logout</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </aside>
 
-    <!-- Main Content -->
-    <main class="ml-64 flex-1 p-8">
-      <div class="mb-6">
-        <h1 class="text-3xl font-bold text-purple-700">Selamat datang, {{ session['username'] }}!</h1>
-        <p class="text-gray-600">Ini adalah panel admin untuk mengelola sistem penjadwalan praktikum online.</p>
-      </div>
+      <!-- Main Content -->
+      <main class="ml-64 flex-1 p-8">
+        <div class="mb-6">
+          <h1 class="text-3xl font-bold text-purple-700">
+            Selamat datang, {{ session['username'] }}!
+          </h1>
+          <p class="text-gray-600">
+            Ini adalah panel admin untuk mengelola sistem penjadwalan praktikum
+            online.
+          </p>
+        </div>
 
-      <!-- Jadwal Praktikum -->
-      <section class="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 class="text-xl font-semibold mb-4">Daftar Jadwal Praktikum</h2>
-        <table class="w-full text-left mb-6">
-          <thead class="text-sm text-gray-600 border-b">
-            <tr>
-              <th class="py-2">Mata Praktikum</th>
-              <th class="py-2">Judul</th>
-              <th class="py-2">Hari</th>
-              <th class="py-2">Jam</th>
-              <th class="py-2">Ruangan</th>
-              <th class="py-2">Dosen</th>
-              <th class="py-2">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for jadwal in jadwal_list %}
-            <tr class="border-b hover:bg-gray-50">
-              <td class="py-2">{{ jadwal.mata_praktikum }}</td>
-              <td class="py-2">{{ jadwal.judul }}</td>
-              <td class="py-2">{{ jadwal.hari }}</td>
-              <td class="py-2">{{ jadwal.jam }}</td>
-              <td class="py-2">{{ jadwal.ruangan }}</td>
-              <td class="py-2">{{ jadwal.dosen }}</td>
-              <td class="py-2 text-blue-600 hover:underline text-sm"><a href="#">Edit</a></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-
-        <!-- Form Tambah Jadwal Praktikum -->
-        <form action="{{ url_for('tambah_jadwal') }}" method="POST">
-          <h3 class="text-lg font-semibold mb-4">Tambah Jadwal Praktikum</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Dropdown Mata Kuliah -->
-            <select name="mata_praktikum" required class="p-2 border rounded w-full">
-              <option value="" disabled selected>Pilih Mata Kuliah</option>
-              <option value="Pemrograman Web">Pemrograman Web</option>
-              <option value="Jaringan Komputer">Jaringan Komputer</option>
-              <option value="Sistem Basis Data">Sistem Basis Data</option>
-              <option value="Sistem Operasi">Sistem Operasi</option>
-            </select>
-
-            <!-- Judul Praktikum -->
-            <input type="text" name="judul" placeholder="Judul Praktikum" required class="p-2 border rounded w-full">
-
-            <!-- Hari -->
-            <input type="text" name="hari" placeholder="Hari" required class="p-2 border rounded w-full">
-
-            <!-- Jam -->
-            <input type="text" name="jam" placeholder="Jam (contoh: 09:00 - 11:00)" required class="p-2 border rounded w-full">
-
-            <!-- Ruangan Static Dropdown -->
-            <select name="ruangan" required class="p-2 border rounded w-full">
-              <option value="" disabled selected>Pilih Ruangan</option>
-              <option value="Lab A">Lab A</option>
-              <option value="Lab B">Lab B</option>
-              <option value="Lab C">Lab C</option>
-              <option value="Lab D">Lab D</option>
-            </select>
-
-            <!-- Dropdown Dosen -->
-            <select name="dosen" required class="p-2 border rounded w-full">
-              <option value="" disabled selected>Pilih Dosen</option>
-              {% for dsn in daftar_dosen %}
-              <option value="{{ dsn.nama }}">{{ dsn.nama }}</option>
+        <!-- Jadwal Praktikum -->
+        <section class="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 class="text-xl font-semibold mb-4">Daftar Jadwal Praktikum</h2>
+          <table class="w-full text-left mb-6">
+            <thead class="text-sm text-gray-600 border-b">
+              <tr>
+                <th class="py-2">Mata Praktikum</th>
+                <th class="py-2">Judul</th>
+                <th class="py-2">Hari</th>
+                <th class="py-2">Jam</th>
+                <th class="py-2">Ruangan</th>
+                <th class="py-2">Dosen</th>
+                <th class="py-2">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for jadwal in jadwal_list %}
+              <tr class="border-b hover:bg-gray-50">
+                <td class="py-2">{{ jadwal.mata_praktikum }}</td>
+                <td class="py-2">{{ jadwal.judul }}</td>
+                <td class="py-2">{{ jadwal.hari }}</td>
+                <td class="py-2">{{ jadwal.jam }}</td>
+                <td class="py-2">{{ jadwal.ruangan }}</td>
+                <td class="py-2">{{ jadwal.dosen }}</td>
+                <td class="py-2 text-blue-600 hover:underline text-sm">
+                  <a href="#">Edit</a>
+                </td>
+              </tr>
               {% endfor %}
-            </select>
-          </div>
+            </tbody>
+          </table>
 
-          <button type="submit" class="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded">
-            Tambah Jadwal
-          </button>
-        </form>
-      </section>
-    </main>
-  </div>
-</body>
+          <!-- Form Tambah Jadwal Praktikum -->
+          <form action="{{ url_for('tambah_jadwal') }}" method="POST">
+            <h3 class="text-lg font-semibold mb-4">Tambah Jadwal Praktikum</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Dropdown Mata Kuliah -->
+              <select
+                name="mata_praktikum"
+                required
+                class="p-2 border rounded w-full"
+              >
+                <option value="" disabled selected>Pilih Mata Kuliah</option>
+                {% for matkul in mata_kuliah %}
+                <option value="{{ matkul.nama }}">{{ matkul.nama }}</option>
+                {% endfor %}
+              </select>
+
+              <!-- Judul Praktikum -->
+              <input
+                type="text"
+                name="judul"
+                placeholder="Judul Praktikum"
+                required
+                class="p-2 border rounded w-full"
+              />
+
+              <!-- Hari -->
+              <input
+                type="text"
+                name="hari"
+                placeholder="Hari"
+                required
+                class="p-2 border rounded w-full"
+              />
+
+              <!-- Jam -->
+              <input
+                type="text"
+                name="jam"
+                placeholder="Jam (contoh: 09:00 - 11:00)"
+                required
+                class="p-2 border rounded w-full"
+              />
+
+              <!-- Ruangan Static Dropdown -->
+              <select name="ruangan" required class="p-2 border rounded w-full">
+                <option value="" disabled selected>Pilih Ruangan</option>
+                <option value="Lab A">Lab A</option>
+                <option value="Lab B">Lab B</option>
+                <option value="Lab C">Lab C</option>
+                <option value="Lab D">Lab D</option>
+              </select>
+
+              <!-- Dropdown Dosen -->
+              <select name="dosen" required class="p-2 border rounded w-full">
+                <option value="" disabled selected>Pilih Dosen</option>
+                {% for dsn in daftar_dosen %}
+                <option value="{{ dsn.name }}">{{ dsn.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              class="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded"
+            >
+              Tambah Jadwal
+            </button>
+          </form>
+        </section>
+      </main>
+    </div>
+  </body>
 </html>

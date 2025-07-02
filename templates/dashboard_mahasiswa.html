@@ -27,8 +27,10 @@
               >
             </li>
             <li>
-              <a href="#" class="block py-2 px-4 rounded hover:bg-purple-100"
-                >Progress Laporan</a
+              <a
+                href="{{ url_for('lihat_laporan') }}"
+                class="block py-2 px-4 rounded hover:bg-purple-100"
+                >Lihat laporan</a
               >
             </li>
             <li>
@@ -86,25 +88,6 @@
             </tbody>
           </table>
         </section>
-
-        <!-- Upload Laporan -->
-        <section class="bg-white rounded-lg shadow p-6 mb-6">
-          <h2 class="text-xl font-semibold mb-4">Unggah Laporan</h2>
-          <form>
-            <input
-              type="file"
-              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 mb-4"
-            />
-            <button
-              type="submit"
-              class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded"
-            >
-              Upload
-            </button>
-          </form>
-        </section>
-
-        <!-- Progress -->
         <section class="bg-white rounded-lg shadow p-6">
           <h2 class="text-xl font-semibold mb-4">Progress Laporan</h2>
           <div class="bg-gray-200 rounded-full h-4 mb-2 w-full">
