@@ -1,7 +1,12 @@
+import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
+from pymongo import MongoClient
 
 app = Flask(__name__)
 app.secret_key = 'secret-key'
+
+client = MongoClient('mongodb://localhost:27017/')
+db = client['praktikum_db']
 
 # Dummy user untuk login
 users = {
@@ -51,19 +56,16 @@ def dosen_dashboard():
 def admin_dashboard():
     if session.get('role') != 'admin':
         return redirect(url_for('home'))
-    return render_template('dashboard_admin.html')  # Pastikan ini punya link ke /admin/data-mahasiswa
+    return render_template('dashboard_admin.html')  
 
 @app.route('/admin/data-mahasiswa')
 def data_mahasiswa():
     if session.get('role') != 'admin':
         return redirect(url_for('home'))
 
-    mahasiswa = [
-        {"nim": "2023001", "nama": "Ahmad Naufal", "email": "naufal@mail.com", "jurusan": "Informatika"},
-        {"nim": "2023002", "nama": "Siti Aminah", "email": "aminah@mail.com", "jurusan": "Sistem Informasi"},
-        {"nim": "2023003", "nama": "Rizki Pratama", "email": "rizki@mail.com", "jurusan": "Teknik Komputer"},
-    ]
+    mahasiswa = db.users.find({'role': 'Mahasiswa'})
     return render_template('admin_data_mahasiswa.html', mahasiswa=mahasiswa)
+
 
 @app.route('/admin/data-dosen')
 def data_dosen():
@@ -81,6 +83,38 @@ def data_dosen():
 def tambah_dosen():
     # Untuk saat ini hanya redirect ulang, simpan data di database jika ingin dinamis
     return redirect(url_for('data_dosen'))
+@app.route('/add_user', methods=['GET', 'POST'])
+def add_user():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        passwordHash = request.form['passwordHash']
+        jurusan = request.form['jurusan']
+        role = request.form['role']
+        nim = request.form['nim']
+        nidn = request.form['nidn']
+
+        # Jika role Mahasiswa, nidn kosongkan
+        if role.lower() == 'mahasiswa':
+            nidn = ''
+
+        user = {
+            'name': name,
+            'email': email,
+            'passwordHash': passwordHash,
+            'jurusan': jurusan,
+            'role': role,
+            'nim': nim,
+            'nidn': nidn,
+            'createdAt': datetime.utcnow()
+        }
+
+        db.users.insert_one(user)
+        return redirect(url_for('index'))
+
+    return render_template('add_user.html')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
