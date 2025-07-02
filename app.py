@@ -72,17 +72,9 @@ def data_dosen():
     if session.get('role') != 'admin':
         return redirect(url_for('home'))
 
-    dosen = [
-        {"nip": "19850101", "nama": "Dr. Yusuf", "email": "yusuf@mail.com", "jurusan": "Informatika"},
-        {"nip": "19850202", "nama": "Sari Dewi", "email": "sari@mail.com", "jurusan": "Sistem Informasi"},
-        {"nip": "19850303", "nama": "Bambang Irawan", "email": "bambang@mail.com", "jurusan": "Teknik Komputer"}
-    ]
+    dosen = db.users.find({'role': 'Dosen'})
     return render_template('admin_data_dosen.html', dosen=dosen)
 
-@app.route('/admin/tambah-dosen', methods=['POST'])
-def tambah_dosen():
-    # Untuk saat ini hanya redirect ulang, simpan data di database jika ingin dinamis
-    return redirect(url_for('data_dosen'))
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
     if request.method == 'POST':
@@ -90,10 +82,6 @@ def add_user():
         email = request.form['email']
         jurusan = request.form['jurusan']
         nim = request.form['nim']
-
-        # Jika role Mahasiswa, nidn kosongkan
-        
-
         user = {
             'name': name,
             'email': email,
@@ -110,32 +98,28 @@ def add_user():
 
     return render_template('add_user.html')
 
-@app.route('/add_user', methods=['GET', 'POST'])
-def add_user():
+@app.route('/add_user_dosen', methods=['GET', 'POST'])
+def add_user_dosen():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         jurusan = request.form['jurusan']
-        nim = request.form['nipn']
-
-        # Jika role Mahasiswa, nidn kosongkan
-        
-
+        nipn = request.form['nipn']
         user = {
             'name': name,
             'email': email,
-            'passwordHash': nim,
+            'passwordHash': nipn,
             'jurusan': jurusan,
-            'role': 'Mahasiswa',
-            'nim': nim,
-            'nidn': '',
+            'role': 'Dosen',
+            'nim': '',
+            'nidn': nipn,
             'createdAt': datetime.utcnow()
         }
 
         db.users.insert_one(user)
-        return redirect(url_for('data_mahasiswa'))
+        return redirect(url_for('data_dosen'))
 
-    return render_template('add_user.html')
+    return render_template('add_user_dosen.html')
 
 
 if __name__ == '__main__':
