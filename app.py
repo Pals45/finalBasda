@@ -66,6 +66,23 @@ def data_mahasiswa():
     mahasiswa = db.users.find({'role': 'Mahasiswa'})
     return render_template('admin_data_mahasiswa.html', mahasiswa=mahasiswa)
 
+
+@app.route('/admin/data-dosen')
+def data_dosen():
+    if session.get('role') != 'admin':
+        return redirect(url_for('home'))
+
+    dosen = [
+        {"nip": "19850101", "nama": "Dr. Yusuf", "email": "yusuf@mail.com", "jurusan": "Informatika"},
+        {"nip": "19850202", "nama": "Sari Dewi", "email": "sari@mail.com", "jurusan": "Sistem Informasi"},
+        {"nip": "19850303", "nama": "Bambang Irawan", "email": "bambang@mail.com", "jurusan": "Teknik Komputer"}
+    ]
+    return render_template('admin_data_dosen.html', dosen=dosen)
+
+@app.route('/admin/tambah-dosen', methods=['POST'])
+def tambah_dosen():
+    # Untuk saat ini hanya redirect ulang, simpan data di database jika ingin dinamis
+    return redirect(url_for('data_dosen'))
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
     if request.method == 'POST':
@@ -119,6 +136,7 @@ def add_user():
         return redirect(url_for('data_mahasiswa'))
 
     return render_template('add_user.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
