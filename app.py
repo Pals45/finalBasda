@@ -46,6 +46,13 @@ def mahasiswa_dashboard():
         return redirect(url_for('home'))
     return render_template('dashboard_mahasiswa.html')
 
+@app.route('/mahasiswa/progress')
+def mahasiswa_progress():
+    if session.get('role') != 'mahasiswa':
+        return redirect(url_for('home'))
+    return render_template('dashboard_mahasiswa_progress.html')
+
+
 @app.route('/dosen')
 def dosen_dashboard():
     if session.get('role') != 'dosen':
@@ -57,6 +64,23 @@ def admin_dashboard():
     if session.get('role') != 'admin':
         return redirect(url_for('home'))
     return render_template('dashboard_admin.html')  
+
+@app.route('/admin/tambah-jadwal', methods=['POST'])
+def tambah_jadwal():
+    if session.get('role') != 'admin':
+        return redirect(url_for('home'))
+
+    mata_praktikum = request.form['mata_praktikum']
+    hari = request.form['hari']
+    jam = request.form['jam']
+    dosen = request.form['dosen']
+
+    # Untuk saat ini hanya mencetak, nanti bisa simpan ke DB
+    print(f"Jadwal baru: {mata_praktikum}, {hari}, {jam}, {dosen}")
+    
+    # Kembali ke dashboard
+    return redirect(url_for('admin_dashboard'))
+
 
 @app.route('/admin/data-mahasiswa')
 def data_mahasiswa():
