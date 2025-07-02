@@ -1,12 +1,24 @@
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, session
+import os
+import gridfs
+from bson.objectid import ObjectId
+from flask import Flask, render_template, request, redirect, send_from_directory, url_for, session
 from pymongo import MongoClient
+from werkzeug.utils import secure_filename
+
 
 app = Flask(__name__)
 app.secret_key = 'secret-key'
 
 client = MongoClient('mongodb://localhost:27017/')
 db = client['studyRoom']
+fs = gridfs.GridFS(db)
+
+
+# Folder penyimpanan file
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Dummy user untuk login
 users = {
@@ -59,6 +71,37 @@ def dosen_dashboard():
         return redirect(url_for('home'))
     return render_template('dashboard_dosen.html')
 
+@app.route('/upload_tugas', methods=['GET', 'POST'])
+def upload_tugas():
+    if request.method == 'POST':
+        judul = request.form['judul']
+        deadline = request.form['deadline']
+        file = request.files['file']
+        
+        # Simpan file ke GridFS
+        file_id = fs.put(file, filename=file.filename, content_type=file.content_type)
+
+        # Simpan metadata tugas ke koleksi biasa
+        db.tugas_collection.insert_one({
+            'judul': judul,
+            'deadline': deadline,
+            'file_id': file_id,
+            'filename': file.filename
+        })
+
+        return redirect(url_for('upload_tugas'))
+
+    # Ambil daftar tugas
+    tugas_list = list(db.tugas_collection.find())
+    return render_template('dashboard_dosen_laporan.html', tugas_dosen=tugas_list)
+
+
+# Route untuk akses file
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
 @app.route('/admin')
 def admin_dashboard():
     if session.get('role') != 'admin':
@@ -103,59 +146,59 @@ def data_dosen():
 def tambah_dosen():
     # Untuk saat ini hanya redirect ulang, simpan data di database jika ingin dinamis
     return redirect(url_for('data_dosen'))
-@app.route('/add_user', methods=['GET', 'POST'])
-def add_user():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        jurusan = request.form['jurusan']
-        nim = request.form['nim']
+# @app.route('/add_user', methods=['GET', 'POST'])
+# def add_user():
+#     if request.method == 'POST':
+#         name = request.form['name']
+#         email = request.form['email']
+#         jurusan = request.form['jurusan']
+#         nim = request.form['nim']
 
-        # Jika role Mahasiswa, nidn kosongkan
+#         # Jika role Mahasiswa, nidn kosongkan
         
 
-        user = {
-            'name': name,
-            'email': email,
-            'passwordHash': nim,
-            'jurusan': jurusan,
-            'role': 'Mahasiswa',
-            'nim': nim,
-            'nidn': '',
-            'createdAt': datetime.utcnow()
-        }
+#         user = {
+#             'name': name,
+#             'email': email,
+#             'passwordHash': nim,
+#             'jurusan': jurusan,
+#             'role': 'Mahasiswa',
+#             'nim': nim,
+#             'nidn': '',
+#             'createdAt': datetime.utcnow()
+#         }
+
+# #         db.users.insert_one(user)
+# #         return redirect(url_for('data_mahasiswa'))
+
+# #     return render_template('add_user.html')
+
+# @app.route('/add_user', methods=['GET', 'POST'])
+# def add_user():
+#     if request.method == 'POST':
+#         name = request.form['name']
+#         email = request.form['email']
+#         jurusan = request.form['jurusan']
+#         nim = request.form['nipn']
+
+#         # Jika role Mahasiswa, nidn kosongkan
+        
+
+#         user = {
+#             'name': name,
+#             'email': email,
+#             'passwordHash': nim,
+#             'jurusan': jurusan,
+#             'role': 'Mahasiswa',
+#             'nim': nim,
+#             'nidn': '',
+#             'createdAt': datetime.utcnow()
+#         }
 
 #         db.users.insert_one(user)
 #         return redirect(url_for('data_mahasiswa'))
 
 #     return render_template('add_user.html')
-
-@app.route('/add_user', methods=['GET', 'POST'])
-def add_user():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        jurusan = request.form['jurusan']
-        nim = request.form['nipn']
-
-        # Jika role Mahasiswa, nidn kosongkan
-        
-
-        user = {
-            'name': name,
-            'email': email,
-            'passwordHash': nim,
-            'jurusan': jurusan,
-            'role': 'Mahasiswa',
-            'nim': nim,
-            'nidn': '',
-            'createdAt': datetime.utcnow()
-        }
-
-        db.users.insert_one(user)
-        return redirect(url_for('data_mahasiswa'))
-
-    return render_template('add_user.html')
 
 
 if __name__ == '__main__':
