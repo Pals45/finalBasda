@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
 from pymongo import MongoClient
 
@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.secret_key = 'secret-key'
 
 client = MongoClient('mongodb://localhost:27017/')
-db = client['praktikum_db']
+db = client['studyRoom']
 
 # Dummy user untuk login
 users = {
@@ -71,32 +71,55 @@ def add_user():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
-        passwordHash = request.form['passwordHash']
         jurusan = request.form['jurusan']
-        role = request.form['role']
         nim = request.form['nim']
-        nidn = request.form['nidn']
 
         # Jika role Mahasiswa, nidn kosongkan
-        if role.lower() == 'mahasiswa':
-            nidn = ''
+        
 
         user = {
             'name': name,
             'email': email,
-            'passwordHash': passwordHash,
+            'passwordHash': nim,
             'jurusan': jurusan,
-            'role': role,
+            'role': 'Mahasiswa',
             'nim': nim,
-            'nidn': nidn,
+            'nidn': '',
             'createdAt': datetime.utcnow()
         }
 
         db.users.insert_one(user)
-        return redirect(url_for('index'))
+        return redirect(url_for('data_mahasiswa'))
 
     return render_template('add_user.html')
 
+@app.route('/add_user', methods=['GET', 'POST'])
+def add_user():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        jurusan = request.form['jurusan']
+        nim = request.form['nipn']
+
+        # Jika role Mahasiswa, nidn kosongkan
+        
+
+        user = {
+            'name': name,
+            'email': email,
+            'passwordHash': nim,
+            'jurusan': jurusan,
+            'role': 'Mahasiswa',
+            'nim': nim,
+            'nidn': '',
+            'createdAt': datetime.utcnow()
+        }
+
+        db.users.insert_one(user)
+        return redirect(url_for('data_mahasiswa'))
+
+    return render_template('add_user.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
+
