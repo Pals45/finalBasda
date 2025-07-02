@@ -1,10 +1,9 @@
-# app.py
 from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
-app.secret_key = 'secret-key'  # Ganti dengan kunci rahasia yang aman
+app.secret_key = 'secret-key'
 
-# Simulasi user login untuk tiap role
+# Dummy user untuk login
 users = {
     'admin': {'username': 'admin', 'password': 'admin123', 'role': 'admin'},
     'mahasiswa': {'username': 'mahasiswa', 'password': 'mhs123', 'role': 'mahasiswa'},
@@ -52,7 +51,19 @@ def dosen_dashboard():
 def admin_dashboard():
     if session.get('role') != 'admin':
         return redirect(url_for('home'))
-    return render_template('dashboard_admin.html')
+    return render_template('dashboard_admin.html')  # Pastikan ini punya link ke /admin/data-mahasiswa
+
+@app.route('/admin/data-mahasiswa')
+def data_mahasiswa():
+    if session.get('role') != 'admin':
+        return redirect(url_for('home'))
+
+    mahasiswa = [
+        {"nim": "2023001", "nama": "Ahmad Naufal", "email": "naufal@mail.com", "jurusan": "Informatika"},
+        {"nim": "2023002", "nama": "Siti Aminah", "email": "aminah@mail.com", "jurusan": "Sistem Informasi"},
+        {"nim": "2023003", "nama": "Rizki Pratama", "email": "rizki@mail.com", "jurusan": "Teknik Komputer"},
+    ]
+    return render_template('admin_data_mahasiswa.html', mahasiswa=mahasiswa)
 
 if __name__ == '__main__':
     app.run(debug=True)
