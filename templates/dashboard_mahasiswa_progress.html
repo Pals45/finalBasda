@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Progress Laporan - Mahasiswa</title>
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='dist/output.css') }}"
+  />
+</head>
+<body class="bg-gray-200 text-gray-800 min-h-screen">
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md h-screen fixed">
+      <div class="p-6">
+        <h2 class="text-2xl font-bold text-purple-700">Mahasiswa</h2>
+        <p class="mt-1 text-sm text-gray-500">Dashboard Praktikum</p>
+      </div>
+      <nav class="px-4">
+        <ul class="space-y-2">
+          <li>
+            <a
+              href="{{ url_for('mahasiswa_dashboard') }}"
+              class="block py-2 px-4 rounded hover:bg-purple-100"
+              >Jadwal</a>
+          </li>
+          <li>
+            <a
+              href="{{ url_for('mahasiswa_progress') }}"
+              class="block py-2 px-4 rounded bg-purple-100 text-purple-700 font-semibold"
+              >Progress Laporan</a>
+          </li>
+          <li>
+            <a href="#" class="block py-2 px-4 rounded hover:bg-purple-100"
+              >Kehadiran</a>
+          </li>
+          <li>
+            <a
+              href="{{ url_for('logout') }}"
+              class="block py-2 px-4 text-red-500 hover:bg-red-100"
+              >Logout</a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 flex-1 p-8">
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold text-purple-700">
+          Progress Laporan Praktikum
+        </h1>
+        <p class="text-gray-600">
+          Berikut adalah ringkasan kemajuan laporan praktikum kamu.
+        </p>
+      </div>
+
+      <!-- Daftar Progress Laporan -->
+      <section class="bg-white rounded-lg shadow p-6">
+        <table class="w-full text-left">
+          <thead class="text-sm text-gray-600 border-b">
+            <tr>
+              <th class="py-2">Pertemuan</th>
+              <th class="py-2">Judul</th>
+              <th class="py-2">Status</th>
+              <th class="py-2">Catatan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b hover:bg-gray-50">
+              <td class="py-2">Pertemuan 1</td>
+              <td>Pengenalan Praktikum</td>
+              <td><span class="text-green-600 font-medium">Disetujui</span></td>
+              <td>-</td>
+            </tr>
+            <tr class="border-b hover:bg-gray-50">
+              <td class="py-2">Pertemuan 2</td>
+              <td>Instalasi Tools</td>
+              <td><span class="text-yellow-600 font-medium">Menunggu</span></td>
+              <td>Perlu revisi kecil</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="py-2">Pertemuan 3</td>
+              <td>Jaringan Dasar</td>
+              <td><span class="text-gray-500 font-medium">Belum Upload</span></td>
+              <td>-</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Progress Bar -->
+        <div class="mt-6">
+          <h2 class="text-md font-semibold mb-2">Progress Keseluruhan</h2>
+          <div class="bg-gray-200 rounded-full h-4 mb-2 w-full">
+            <div class="bg-purple-600 h-4 rounded-full" style="width: 40%"></div>
+          </div>
+          <p class="text-sm text-gray-600">40% laporan selesai</p>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -76,8 +76,24 @@
               <td>Ibu Sari</td>
               <td><button class="text-sm text-blue-600 hover:underline">Edit</button></td>
             </tr>
+            
           </tbody>
+          
         </table>
+        <!-- Form Tambah Jadwal Praktikum -->
+<form action="{{ url_for('tambah_jadwal') }}" method="POST" class="mt-8">
+  <h3 class="text-lg font-semibold mb-4">Tambah Jadwal Praktikum</h3>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <input type="text" name="mata_praktikum" placeholder="Mata Praktikum" required class="p-2 border rounded w-full">
+    <input type="text" name="hari" placeholder="Hari" required class="p-2 border rounded w-full">
+    <input type="text" name="jam" placeholder="Jam (contoh: 09:00 - 11:00)" required class="p-2 border rounded w-full">
+    <input type="text" name="dosen" placeholder="Nama Dosen Pembimbing" required class="p-2 border rounded w-full">
+  </div>
+  <button type="submit" class="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded">
+    Tambah Jadwal
+  </button>
+</form>
+
       </section>
     </main>
   </div>
