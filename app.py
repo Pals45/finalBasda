@@ -227,7 +227,7 @@ def add_user_dosen():
         name = request.form['name']
         email = request.form['email']
         jurusan = request.form['jurusan']
-        nim = request.form['nipn']
+        nipn = request.form['nipn']
 
         # Jika role Mahasiswa, nidn kosongkan
         
@@ -235,11 +235,11 @@ def add_user_dosen():
         user = {
             'name': name,
             'email': email,
-            'passwordHash': nim,
+            'passwordHash': nipn,
             'jurusan': jurusan,
-            'role': 'Mahasiswa',
-            'nim': nim,
-            'nidn': '',
+            'role': 'Dosen',
+            'nim': '',
+            'nidn': nipn,
             'createdAt': datetime.utcnow()
         }
 
