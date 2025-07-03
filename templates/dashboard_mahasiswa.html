@@ -61,7 +61,25 @@
             Berikut ini adalah ringkasan kegiatan praktikum kamu.
           </p>
         </div>
-
+        <!-- Form Search -->
+        <form
+          method="GET"
+          action="{{ url_for('mahasiswa_search') }}"
+          class="mb-4 flex items-center space-x-2"
+        >
+          <input
+            type="text"
+            name="search"
+            placeholder="Cari mata praktikum atau pembimbing..."
+            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <button
+            type="submit"
+            class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
+          >
+            Cari
+          </button>
+        </form>
         <!-- Jadwal Praktikum -->
         <section class="bg-white rounded-lg shadow p-6 mb-6">
           <h2 class="text-xl font-semibold mb-4">Jadwal Praktikum</h2>

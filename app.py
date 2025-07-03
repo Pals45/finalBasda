@@ -63,7 +63,25 @@ def mahasiswa_dashboard():
         return redirect(url_for('home'))
     jadwal = db.schedule.find()
     return render_template('dashboard_mahasiswa.html',jadwal_list=jadwal)
+@app.route('/mahasiswa/dashboard')
+def mahasiswa_search():
+    if session.get('role') != 'Mahasiswa':
+        return redirect(url_for('home'))
 
+    search_query = request.args.get('search', '').strip().lower()
+    all_jadwal = list(db.schedule.find()) 
+
+    if search_query:
+        # Filter jadwal yang cocok dengan pencarian (mata praktikum atau dosen)
+        filtered_jadwal = [
+            j for j in all_jadwal
+            if search_query in j['mata_praktikum'].lower() or search_query in j['dosen'].lower()
+        ]
+    else:
+        # Jika tidak ada pencarian, tampilkan semua jadwal
+        filtered_jadwal = all_jadwal
+
+    return render_template('dashboard_mahasiswa.html', jadwal_list=filtered_jadwal)
 @app.route('/mahasiswa/progress')
 def mahasiswa_progress():
     if session.get('role') != 'Mahasiswa':
@@ -135,9 +153,9 @@ def upload_tugas():
     )
 @app.route('/daftar_tugas', methods=['GET', 'POST'])
 def daftar_tugas():
-    laporan = list(db.laporan_mahasiswa.find())  # Ubah cursor jadi list
-    return render_template('dashboard_dosen_daftar_tugas.html', laporan=laporan)
-
+    laporan=db.laporan_mahasiswa.find()
+    
+    return render_template('dashboard_dosen_daftar_tugas.html',laporan=laporan)
 
 # Route untuk akses file
 @app.route('/uploads/<filename>')
