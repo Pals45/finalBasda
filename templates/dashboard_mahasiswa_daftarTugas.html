@@ -20,16 +20,32 @@
         <nav class="px-4">
           <ul class="space-y-2">
             <li>
-              <a href="#" class="block py-2 px-4 rounded hover:bg-purple-100 text-purple-700 font-semibold">Jadwal</a>
+              <a
+                href="#"
+                class="block py-2 px-4 rounded hover:bg-purple-100 text-purple-700 font-semibold"
+                >Jadwal</a
+              >
             </li>
             <li>
-              <a href="{{ url_for('lihat_laporan') }}" class="block py-2 px-4 rounded hover:bg-purple-100">Progress Laporan</a>
+              <a
+                href="{{ url_for('lihat_laporan') }}"
+                class="block py-2 px-4 rounded hover:bg-purple-100"
+                >Progress Laporan</a
+              >
             </li>
             <li>
-              <a href="{{ url_for('mahasiswa_kehadiran') }}" class="block py-2 px-4 rounded hover:bg-purple-100">Kehadiran</a>
+              <a
+                href="{{ url_for('mahasiswa_kehadiran') }}"
+                class="block py-2 px-4 rounded hover:bg-purple-100"
+                >Kehadiran</a
+              >
             </li>
             <li>
-              <a href="{{ url_for('logout') }}" class="block py-2 px-4 text-red-500 hover:bg-red-100">Logout</a>
+              <a
+                href="{{ url_for('logout') }}"
+                class="block py-2 px-4 text-red-500 hover:bg-red-100"
+                >Logout</a
+              >
             </li>
           </ul>
         </nav>
@@ -38,9 +54,7 @@
       <!-- Main Content -->
       <main class="ml-64 flex-1 p-8">
         <div class="mb-6">
-          <h1 class="text-3xl font-bold text-purple-700">
-            Laporan Praktikum
-          </h1>
+          <h1 class="text-3xl font-bold text-purple-700">Laporan Praktikum</h1>
           <p class="text-gray-600">
             Berikut ini adalah daftar laporan yang sudah diupload.
           </p>
@@ -57,19 +71,31 @@
                 <th class="py-2">File</th>
               </tr>
             </thead>
-            <tbody>
-              {% for item in laporan %}
-              <tr class="border-b hover:bg-gray-50">
-                <td class="py-2">{{ item.mata_praktikum }}</td>
-                <td>{{ item.judul }}</td>
-                <td>{{ item.tanggal_upload }}</td>
-                <td>
-                  <a href="{{ item.file_url }}" class="text-purple-600 hover:underline" target="_blank">Lihat File</a>
-                </td>
-              </tr>
-              {% else %}
+            <thead class="text-sm text-gray-600 border-b">
               <tr>
-                <td colspan="4" class="py-4 text-center text-gray-500">Belum ada laporan diupload.</td>
+                <th class="py-2">Mata Kuliah</th>
+                <th class="py-2">Pertemuan</th>
+                <th class="py-2">Deadline</th>
+                <th class="py-2">Catatan</th>
+                <th class="py-2">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for laporan in laporan_list %}
+              <tr class="border-b hover:bg-gray-50">
+                <td class="py-2">{{ laporan.mata_kuliah_nama }}</td>
+                <!-- Tambahan -->
+                <td>{{ laporan.pertemuan }}</td>
+                <td>{{ laporan.deadline }}</td>
+                <td>{{ laporan.catatan or "-" }}</td>
+                <td class="py-2">
+                  <a
+                    href="{{ url_for('upload_tugas_mahasiswa', tugas_id=laporan._id) }}"
+                    class="inline-block bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700"
+                  >
+                    Upload
+                  </a>
+                </td>
               </tr>
               {% endfor %}
             </tbody>

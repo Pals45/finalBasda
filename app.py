@@ -84,18 +84,30 @@ def dosen_dashboard():
         return redirect(url_for('home'))
     return render_template('dashboard_dosen.html')
 
-@app.route('/upload_tugas', methods=['GET', 'POST'])
+@app.route('/dosen/upload-tugas', methods=['GET', 'POST'])
 def upload_tugas():
-    if request.method == 'POST':    
-        judul = request.form['judul']
-        deadline = request.form['deadline']
-        mata_kuliah_id = request.form['mata_kuliah_id']
-        pertemuan = request.form['pertemuan']
-        catatan = request.form['catatan']
-        file = request.files['file']
+    if session.get('role') != 'Dosen':
+        return redirect(url_for('home'))
 
+    # Ambil daftar mata kuliah untuk dropdown
+    mata_kuliah_list = list(db.mata_kuliah.find())
+
+    if request.method == 'POST':    
+        judul = request.form.get('judul')
+        deadline = request.form.get('deadline')
+        mata_kuliah_id = request.form.get('mata_kuliah_id')
+        pertemuan = request.form.get('pertemuan')
+        catatan = request.form.get('catatan')
+        file = request.files.get('file')
+
+        if not (judul and deadline and mata_kuliah_id and pertemuan and file):
+            flash("Semua field wajib diisi.")
+            return redirect(url_for('upload_tugas'))
+
+        # Simpan file ke GridFS
         file_id = fs.put(file, filename=file.filename, content_type=file.content_type)
 
+        # Simpan metadata tugas ke database
         db.tugas_collection.insert_one({
             'judul': judul,
             'deadline': deadline,
@@ -103,14 +115,17 @@ def upload_tugas():
             'pertemuan': pertemuan,
             'catatan': catatan,
             'file_id': file_id,
-            'filename': file.filename
+            'filename': file.filename,
+            'created_at': datetime.utcnow()
         })
 
+        flash("Tugas berhasil diunggah.")
         return redirect(url_for('upload_tugas'))
 
-    # Ambil daftar tugas
-    matakuliah_list = db.mata_kuliah.find()    
-    return render_template('dashboard_dosen_laporan.html',mata_kuliah_list=matakuliah_list)
+    return render_template(
+        'dashboard_dosen_laporan.html',
+        mata_kuliah_list=mata_kuliah_list
+    )
 @app.route('/daftar_tugas', methods=['GET', 'POST'])
 def daftar_tugas():
     laporan=db.laporan_mahasiswa.find()
@@ -127,11 +142,19 @@ def lihat_laporan():
     if session.get('role') != 'Mahasiswa':
         return redirect(url_for('home'))
 
+    laporan = list(db.tugas_collection.find())
 
-    
-    laporan = db.tugas_collection.find()
+    for tugas in laporan:
+        mk_id = tugas.get('mata_kuliah_id')
+        if isinstance(mk_id, str):
+            mk_id = ObjectId(mk_id)
 
-    return render_template('dashboard_mahasiswa_daftarTugas.html', laporan_list=laporan)
+        matkul = db.mata_kuliah.find_one({'_id': mk_id})
+        tugas['nama_matkul'] = matkul['nama'] if matkul else 'Tidak diketahui'
+
+    return render_template('dashboard_mahasiswa_progress.html', laporan_list=laporan)
+
+
 
 @app.route('/mahasiswa/kehadiran')
 def mahasiswa_kehadiran():

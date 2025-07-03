@@ -71,15 +71,18 @@
                 <th class="py-2">Pertemuan</th>
                 <th class="py-2">Deadline</th>
                 <th class="py-2">Catatan</th>
+                <th class="py-2">File</th>
                 <th class="py-2">Aksi</th>
               </tr>
             </thead>
             <tbody>
               {% for laporan in laporan_list %}
               <tr class="border-b hover:bg-gray-50">
-                <td class="py-2">{{ laporan.pertemuan }}</td>
-                <td>{{ laporan.judul }}</td>
+                <td class="py-2">{{ laporan.nama_matkul }}</td>
+                <!-- Tambahan -->
+                <td>{{ laporan.pertemuan }}</td>
                 <td>{{ laporan.deadline }}</td>
+                
                 <td>{{ laporan.catatan or "-" }}</td>
                 <td class="py-2">
                   <a
