@@ -141,6 +141,59 @@ def lihat_laporan():
 
     return render_template('dashboard_mahasiswa_daftarTugas.html', laporan=laporan)
 
+@app.route('/mahasiswa/kehadiran')
+def mahasiswa_kehadiran():
+    if session.get('role') != 'mahasiswa':
+        return redirect(url_for('home'))
+
+    username = session['username']
+    kehadiran = list(db.kehadiran.find({'username': username}))
+    daftar_matkul = list(db.mata_kuliah.find())
+
+    # Hitung ringkasan
+    total_hadir = sum(1 for k in kehadiran if k['status'] == 'Hadir')
+    total_izin = sum(1 for k in kehadiran if k['status'] == 'Izin')
+    total_alpha = sum(1 for k in kehadiran if k['status'] == 'Alpha')
+
+    return render_template(
+        'dashboard_mahasiswa_kehadiran.html',
+        kehadiran=kehadiran,
+        tanggal_hari_ini=datetime.now().strftime('%Y-%m-%d'),
+        daftar_matkul=daftar_matkul,
+        total_hadir=total_hadir,
+        total_izin=total_izin,
+        total_alpha=total_alpha
+    )
+
+
+@app.route('/mahasiswa/absen', methods=['POST'])
+def absen_mahasiswa():
+    if session.get('role') != 'mahasiswa':
+        return redirect(url_for('home'))
+
+    data = {
+        'username': session['username'],
+        'tanggal': request.form['tanggal'],
+        'matkul': request.form['matkul'],
+        'pertemuan': request.form['pertemuan'],
+        'status': request.form['keterangan'],
+        'waktu_absen': datetime.utcnow()
+    }
+
+    # Cegah absensi ganda
+    existing = db.kehadiran.find_one({
+        'username': data['username'],
+        'tanggal': data['tanggal'],
+        'matkul': data['matkul'],
+        'pertemuan': data['pertemuan']
+    })
+
+    if not existing:
+        db.kehadiran.insert_one(data)
+
+    return redirect(url_for('mahasiswa_kehadiran'))
+
+
 @app.route('/admin')
 def admin_dashboard():
     if session.get('role') != 'admin':
