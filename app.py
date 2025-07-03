@@ -69,6 +69,32 @@ def mahasiswa_progress():
         return redirect(url_for('home'))
     return render_template('dashboard_mahasiswa_progress.html')
 
+@app.route('/mahasiswa/upload', methods=['POST'])
+def upload_tugas_mahasiswa():
+    if session.get('role') != 'mahasiswa':
+        return redirect(url_for('home'))
+
+    judul = request.form['judul']
+    pertemuan = request.form['pertemuan']
+    file = request.files['file']
+
+    if file:
+        filename = secure_filename(file.filename)
+        file_id = fs.put(file, filename=filename)
+
+        db.tugas_collection.insert_one({
+            'username': session['username'],
+            'judul': judul,
+            'pertemuan': pertemuan,
+            'file_id': file_id,
+            'filename': filename,
+            'status': 'Menunggu',
+            'catatan': '',
+            'uploaded_at': datetime.utcnow()
+        })
+
+    return redirect(url_for('mahasiswa_progress'))
+
 
 @app.route('/dosen')
 def dosen_dashboard():

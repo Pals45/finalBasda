@@ -98,6 +98,60 @@
           <p class="text-sm text-gray-600">40% laporan selesai</p>
         </div>
       </section>
+      <!-- Form Upload Tugas -->
+<div class="mt-10">
+  <h2 class="text-md font-semibold mb-2">Upload Tugas</h2>
+  <form
+    action="{{ url_for('upload_tugas_mahasiswa') }}"
+    method="POST"
+    enctype="multipart/form-data"
+    class="space-y-4"
+  >
+    <div>
+      <label for="judul" class="block text-sm font-medium text-gray-700">Judul Laporan</label>
+      <input
+        type="text"
+        name="judul"
+        id="judul"
+        required
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+      />
+    </div>
+    <div>
+      <label for="pertemuan" class="block text-sm font-medium text-gray-700">Pertemuan Ke</label>
+      <select
+        name="pertemuan"
+        id="pertemuan"
+        required
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+      >
+        <option value="">-- Pilih Pertemuan --</option>
+        <option value="Pertemuan 1">Pertemuan 1</option>
+        <option value="Pertemuan 2">Pertemuan 2</option>
+        <option value="Pertemuan 3">Pertemuan 3</option>
+        <!-- Tambah pertemuan sesuai kebutuhan -->
+      </select>
+    </div>
+    <div>
+      <label for="file" class="block text-sm font-medium text-gray-700">File Laporan (PDF/Word)</label>
+      <input
+        type="file"
+        name="file"
+        id="file"
+        accept=".pdf,.doc,.docx"
+        required
+        class="mt-1 block w-full"
+      />
+    </div>
+    <button
+      type="submit"
+      class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+    >
+      Upload
+    </button>
+  </form>
+</div>
+
     </main>
   </div>
 </body>
