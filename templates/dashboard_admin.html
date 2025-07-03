@@ -60,6 +60,14 @@
 
       <!-- Main Content -->
       <main class="ml-64 flex-1 p-8">
+        {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
+      {{ messages[0] }}
+    </div>
+  {% endif %}
+{% endwith %}
+
         <div class="mb-6">
           <h1 class="text-3xl font-bold text-purple-700">
             Selamat datang, {{ session['username'] }}!
@@ -89,13 +97,18 @@
               {% for jadwal in jadwal_list %}
               <tr class="border-b hover:bg-gray-50">
                 <td class="py-2">{{ jadwal.mata_praktikum }}</td>
-                <td class="py-2">{{ jadwal.judul }}</td>
+                <td class="py-2">{{ jadwal.pertemuan }}</td>
                 <td class="py-2">{{ jadwal.hari }}</td>
                 <td class="py-2">{{ jadwal.jam }}</td>
                 <td class="py-2">{{ jadwal.ruangan }}</td>
                 <td class="py-2">{{ jadwal.dosen }}</td>
                 <td class="py-2 text-blue-600 hover:underline text-sm">
-                  <a href="#">Edit</a>
+                   <a href="{{ url_for('admin_dashboard', edit_id=jadwal._id) }}">Edit</a>
+                </td>
+                <td class="py-2 text-red-600 hover:underline text-sm">
+                  <form method="POST" action="{{ url_for('hapus_jadwal', id=jadwal._id) }}" onsubmit="return confirm('Yakin ingin menghapus jadwal ini?')">
+  <button type="submit" class="text-red-600 hover:underline text-sm">Hapus</button>
+</form>
                 </td>
               </tr>
               {% endfor %}
@@ -107,71 +120,116 @@
             <h3 class="text-lg font-semibold mb-4">Tambah Jadwal Praktikum</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- Dropdown Mata Kuliah -->
-              <select
-                name="mata_praktikum"
-                required
-                class="p-2 border rounded w-full"
-              >
-                <option value="" disabled selected>Pilih Mata Kuliah</option>
-                {% for matkul in mata_kuliah %}
-                <option value="{{ matkul.nama }}">{{ matkul.nama }}</option>
-                {% endfor %}
-              </select>
+              <!-- Mata Praktikum -->
+<select name="mata_praktikum" id="mata_praktikum" required class="p-2 border rounded w-full">
+  <option value="" disabled {{ 'selected' if not edit_jadwal }}>Pilih Mata Kuliah</option>
+  {% for matkul in mata_kuliah %}
+  <option value="{{ matkul._id }}" {{ 'selected' if edit_jadwal and matkul._id == edit_jadwal.mata_praktikum }}>{{ matkul.nama }}</option>
+  {% endfor %}
+</select>
 
-              <!-- Judul Praktikum -->
-              <input
-                type="text"
-                name="judul"
-                placeholder="Judul Praktikum"
-                required
-                class="p-2 border rounded w-full"
-              />
+<!-- Pertemuan -->
+<select
+  name="pertemuan"
+  id="pertemuan"
+  required
+  class="p-2 border rounded w-full"
+  data-selected="{{ edit_jadwal.pertemuan if edit_jadwal else '' }}"
+>
+  <option value="" disabled selected>Pilih Pertemuan</option>
+</select>
 
-              <!-- Hari -->
-              <input
-                type="text"
-                name="hari"
-                placeholder="Hari"
-                required
-                class="p-2 border rounded w-full"
-              />
+<!-- Hari -->
+<select name="hari" required class="p-2 border rounded w-full">
+  <option disabled {{ 'selected' if not edit_jadwal }}>Pilih Hari</option>
+  {% for h in ['Senin','Selasa','Rabu','Kamis','Jumat'] %}
+  <option value="{{ h }}" {{ 'selected' if edit_jadwal and edit_jadwal.hari == h }}>{{ h }}</option>
+  {% endfor %}
+</select>
 
-              <!-- Jam -->
-              <input
-                type="text"
-                name="jam"
-                placeholder="Jam (contoh: 09:00 - 11:00)"
-                required
-                class="p-2 border rounded w-full"
-              />
+<!-- Jam -->
+<input type="text" name="jam" placeholder="Jam (contoh: 09:00 - 11:00)" required class="p-2 border rounded w-full" value="{{ edit_jadwal.jam if edit_jadwal else '' }}" />
 
-              <!-- Ruangan Static Dropdown -->
-              <select name="ruangan" required class="p-2 border rounded w-full">
-                <option value="" disabled selected>Pilih Ruangan</option>
-                <option value="Lab A">Lab A</option>
-                <option value="Lab B">Lab B</option>
-                <option value="Lab C">Lab C</option>
-                <option value="Lab D">Lab D</option>
-              </select>
+<!-- Ruangan -->
+<select name="ruangan" required class="p-2 border rounded w-full">
+  <option disabled {{ 'selected' if not edit_jadwal }}>Pilih Ruangan</option>
+  {% for r in ['Lab A','Lab B','Lab C','Lab D'] %}
+  <option value="{{ r }}" {{ 'selected' if edit_jadwal and edit_jadwal.ruangan == r }}>{{ r }}</option>
+  {% endfor %}
+</select>
 
-              <!-- Dropdown Dosen -->
-              <select name="dosen" required class="p-2 border rounded w-full">
-                <option value="" disabled selected>Pilih Dosen</option>
-                {% for dsn in daftar_dosen %}
-                <option value="{{ dsn.name }}">{{ dsn.name }}</option>
-                {% endfor %}
-              </select>
+<!-- Dosen -->
+<select name="dosen" required class="p-2 border rounded w-full">
+  <option disabled {{ 'selected' if not edit_jadwal }}>Pilih Dosen</option>
+  {% for dsn in daftar_dosen %}
+  <option value="{{ dsn.name }}" {{ 'selected' if edit_jadwal and edit_jadwal.dosen == dsn.name }}>{{ dsn.name }}</option>
+  {% endfor %}
+</select>
+
             </div>
+{% if edit_jadwal %}
+  <a
+    href="{{ url_for('admin_dashboard') }}"
+    class="inline-block mt-4 mr-2 px-4 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded"
+  >
+    Batal Edit
+  </a>
+{% endif %}
 
             <button
-              type="submit"
-              class="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded"
-            >
-              Tambah Jadwal
-            </button>
+  type="submit"
+  class="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded"
+>
+  {{ 'Simpan Perubahan' if edit_jadwal else 'Tambah Jadwal' }}
+</button>
+
           </form>
         </section>
       </main>
     </div>
+    <script>
+      const mataKuliahData = {
+        {% for matkul in mata_kuliah %}
+        "{{ matkul._id }}": {{ matkul.totalPertemuan }},
+        {% endfor %}
+      };
+
+      const mataPraktikumSelect = document.getElementById("mata_praktikum");
+      const pertemuanSelect = document.getElementById("pertemuan");
+
+      mataPraktikumSelect.addEventListener("change", function () {
+        const matkulId = this.value;
+        const totalPertemuan = mataKuliahData[matkulId] || 0;
+
+        // Kosongkan dan isi ulang dropdown pertemuan
+        pertemuanSelect.innerHTML = '<option disabled selected>Pilih Pertemuan</option>';
+        for (let i = 1; i <= totalPertemuan; i++) {
+          const option = document.createElement("option");
+          option.value = "Pertemuan " + i;
+          option.textContent = "Pertemuan " + i;
+          pertemuanSelect.appendChild(option);
+        }
+      });
+      window.addEventListener("DOMContentLoaded", function () {
+  const matkulId = mataPraktikumSelect.value;
+  const totalPertemuan = mataKuliahData[matkulId] || 0;
+  const selectedPertemuan = pertemuanSelect.dataset.selected;
+
+  if (matkulId && totalPertemuan > 0) {
+    pertemuanSelect.innerHTML = '<option disabled selected>Pilih Pertemuan</option>';
+    for (let i = 1; i <= totalPertemuan; i++) {
+      const pertemuan = `Pertemuan ${i}`;
+      const option = document.createElement("option");
+      option.value = pertemuan;
+      option.textContent = pertemuan;
+      if (selectedPertemuan === pertemuan) {
+        option.selected = true;
+      }
+      pertemuanSelect.appendChild(option);
+    }
+  }
+});
+
+    </script>
   </body>
 </html>

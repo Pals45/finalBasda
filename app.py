@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import gridfs
 from bson.objectid import ObjectId
-from flask import Flask, render_template, request, redirect, send_from_directory, url_for, session
+from flask import Flask, flash, render_template, request, redirect, send_from_directory, url_for, session
 from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 
@@ -150,27 +150,92 @@ def lihat_laporan():
 def admin_dashboard():
     if session.get('role') != 'admin':
         return redirect(url_for('home'))
-    daftar_dosen = db.users.find({'role':'Dosen'})
-    matakuliah = db.mata_kuliah.find()
-    return render_template('dashboard_admin.html',daftar_dosen=daftar_dosen,mata_kuliah=matakuliah)  
+
+    daftar_dosen = db.users.find({'role': 'Dosen'})
+    jadwal_list = db.schedule.find()
+    mata_kuliah_cursor = db.mata_kuliah.find()
+    edit_jadwal = None
+    edit_id = request.args.get('edit_id')
+    if edit_id:
+        edit_jadwal = db.schedule.find_one({'_id': ObjectId(edit_id)})
+    
+    mata_kuliah = []
+    for mk in mata_kuliah_cursor:
+        mk['_id'] = str(mk['_id'])  # Ubah ObjectId jadi string
+        mata_kuliah.append(mk)
+
+    return render_template('dashboard_admin.html',
+                           daftar_dosen=daftar_dosen,
+                           mata_kuliah=mata_kuliah,
+                           jadwal_list=jadwal_list,
+                            edit_jadwal=edit_jadwal)
 
 @app.route('/admin/tambah-jadwal', methods=['POST'])
 def tambah_jadwal():
     if session.get('role') != 'admin':
         return redirect(url_for('home'))
 
-    mata_praktikum = request.form['mata_praktikum']
-    hari = request.form['hari']
-    jam = request.form['jam']
-    dosen = request.form['dosen']
+    mata_praktikum_id = request.form.get('mata_praktikum')
+    pertemuan = request.form.get('pertemuan')
+    hari = request.form.get('hari')
+    jam = request.form.get('jam')
+    ruangan = request.form.get('ruangan')
+    dosen = request.form.get('dosen')
 
-    # Untuk saat ini hanya mencetak, nanti bisa simpan ke DB
-    print(f"Jadwal baru: {mata_praktikum}, {hari}, {jam}, {dosen}")
-    
-    # Kembali ke dashboard
+    # Optional: Ambil nama mata kuliah dari ID-nya jika kamu ingin menyimpan nama juga
+    matkul = db.mata_kuliah.find_one({'_id': ObjectId(mata_praktikum_id)})
+    nama_matkul = matkul['nama'] if matkul else 'Unknown'
+
+    schedule = {
+        'mata_praktikum_id': ObjectId(mata_praktikum_id),
+        'mata_praktikum': nama_matkul,
+        'pertemuan': pertemuan,
+        'hari': hari,
+        'jam': jam,
+        'ruangan': ruangan,
+        'dosen': dosen
+    }
+
+    db.schedule.insert_one(schedule)
+    flash('Jadwal berhasil ditambahkan.')
     return redirect(url_for('admin_dashboard'))
+@app.route('/admin/edit-jadwal/<id>', methods=['POST'])
+def edit_jadwal(id):
+    if session.get('role') != 'admin':
+        return redirect(url_for('home'))
 
+    mata_praktikum_id = request.form.get('mata_praktikum')
+    pertemuan = request.form.get('pertemuan')
+    hari = request.form.get('hari')
+    jam = request.form.get('jam')
+    ruangan = request.form.get('ruangan')
+    dosen = request.form.get('dosen')
 
+    # Ambil nama matkul dari ID
+    matkul = db.mata_kuliah.find_one({'_id': ObjectId(mata_praktikum_id)})
+    nama_matkul = matkul['nama'] if matkul else 'Unknown'
+
+    updated_data = {
+        'mata_praktikum_id': ObjectId(mata_praktikum_id),
+        'mata_praktikum': nama_matkul,
+        'pertemuan': pertemuan,
+        'hari': hari,
+        'jam': jam,
+        'ruangan': ruangan,
+        'dosen': dosen
+    }
+
+    db.schedule.update_one({'_id': ObjectId(id)}, {'$set': updated_data})
+    flash('Jadwal berhasil diedit.')
+    return redirect(url_for('admin_dashboard'))
+@app.route('/admin/hapus-jadwal/<id>', methods=['POST'])
+def hapus_jadwal(id):
+    if session.get('role') != 'admin':
+        return redirect(url_for('home'))
+
+    db.schedule.delete_one({'_id': ObjectId(id)})
+    flash('Jadwal berhasil dihapus.')
+    return redirect(url_for('admin_dashboard'))
 @app.route('/admin/data-mahasiswa')
 def data_mahasiswa():
     if session.get('role') != 'admin':
