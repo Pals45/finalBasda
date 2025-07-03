@@ -148,7 +148,7 @@ def lihat_laporan():
 
 @app.route('/mahasiswa/kehadiran')
 def mahasiswa_kehadiran():
-    if session.get('role') != 'mahasiswa':
+    if session.get('role') != 'Mahasiswa':
         return redirect(url_for('home'))
 
     username = session['username']
