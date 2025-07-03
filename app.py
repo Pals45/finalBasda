@@ -68,34 +68,6 @@ def mahasiswa_progress():
     if session.get('role') != 'Mahasiswa':
         return redirect(url_for('home'))
     return render_template('dashboard_mahasiswa_progress.html')
-
-@app.route('/mahasiswa/upload', methods=['POST'])
-def upload_tugas_mahasiswa():
-    if session.get('role') != 'mahasiswa':
-        return redirect(url_for('home'))
-
-    judul = request.form['judul']
-    pertemuan = request.form['pertemuan']
-    file = request.files['file']
-
-    if file:
-        filename = secure_filename(file.filename)
-        file_id = fs.put(file, filename=filename)
-
-        db.tugas_collection.insert_one({
-            'username': session['username'],
-            'judul': judul,
-            'pertemuan': pertemuan,
-            'file_id': file_id,
-            'filename': filename,
-            'status': 'Menunggu',
-            'catatan': '',
-            'uploaded_at': datetime.utcnow()
-        })
-
-    return redirect(url_for('mahasiswa_progress'))
-
-
 @app.route('/dosen')
 def dosen_dashboard():
     if session.get('role') != 'Dosen':
@@ -137,22 +109,22 @@ def uploaded_file(filename):
 
 @app.route('/mahasiswa/laporan')
 def lihat_laporan():
-    if session.get('role') != 'mahasiswa':
+    if session.get('role') != 'Mahasiswa':
         return redirect(url_for('home'))
 
 
     
     laporan = db.tugas_collection.find()
 
-    return render_template('dashboard_mahasiswa_daftarTugas.html', laporan=laporan)
+    return render_template('dashboard_mahasiswa_daftarTugas.html', laporan_list=laporan)
 
 @app.route('/mahasiswa/kehadiran')
 def mahasiswa_kehadiran():
     if session.get('role') != 'Mahasiswa':
         return redirect(url_for('home'))
 
-    username = session['username']
-    kehadiran = list(db.kehadiran.find({'username': username}))
+    username = session['email']
+    kehadiran = list(db.kehadiran.find({'email': username}))
     daftar_matkul = list(db.mata_kuliah.find())
 
     # Hitung ringkasan
@@ -169,15 +141,36 @@ def mahasiswa_kehadiran():
         total_izin=total_izin,
         total_alpha=total_alpha
     )
+@app.route('/tugas/upload/<tugas_id>', methods=['GET', 'POST'])
+def upload_tugas_mahasiswa(tugas_id):
+    if session.get('role') != 'Mahasiswa':
+        return redirect(url_for('home'))
 
+    tugas = db.tugas.find_one({'_id': ObjectId(tugas_id)})
+    if request.method == 'POST':
+        file_jawaban = request.form['file_jawaban']  # asumsi pakai URL / filename
+        catatan = request.form['catatan']
+
+        db.pengumpulan_tugas.insert_one({
+            'tugas_id': ObjectId(tugas_id),
+            'mahasiswa_id': session['user_id'],
+            'file_jawaban': file_jawaban,
+            'catatan': catatan,
+            'waktu_upload': datetime.utcnow()
+        })
+
+        flash('Tugas berhasil diunggah.')
+        return redirect(url_for('daftar_tugas_mahasiswa'))
+
+    return render_template('dashboard_mahasiswa_progress.html', tugas=tugas)
 
 @app.route('/mahasiswa/absen', methods=['POST'])
 def absen_mahasiswa():
-    if session.get('role') != 'mahasiswa':
+    if session.get('role') != 'Mahasiswa':
         return redirect(url_for('home'))
 
     data = {
-        'username': session['username'],
+        'email': session['email'],
         'tanggal': request.form['tanggal'],
         'matkul': request.form['matkul'],
         'pertemuan': request.form['pertemuan'],
@@ -187,7 +180,7 @@ def absen_mahasiswa():
 
     # Cegah absensi ganda
     existing = db.kehadiran.find_one({
-        'username': data['username'],
+        'email': data['email'],
         'tanggal': data['tanggal'],
         'matkul': data['matkul'],
         'pertemuan': data['pertemuan']
