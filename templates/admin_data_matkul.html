@@ -72,32 +72,39 @@
           <form
             method="POST"
             action="{{ url_for('tambah_mata_kuliah') }}"
-            class="grid grid-cols-3 gap-4"
+            class="flex flex-wrap items-center gap-4"
           >
             <input
               type="text"
               name="kode"
-              placeholder="Kode Mata Kuliah"
+              placeholder="Kode MK"
               required
-              class="p-2 border rounded w-full"
+              class="p-2 border rounded w-48"
             />
             <input
               type="text"
               name="nama"
               placeholder="Nama Mata Kuliah"
               required
-              class="p-2 border rounded w-full"
+              class="p-2 border rounded w-64"
             />
             <input
               type="text"
               name="jurusan"
               placeholder="Jurusan"
               required
-              class="p-2 border rounded w-full"
+              class="p-2 border rounded w-56"
+            />
+            <input
+              type="text"
+              name="totalPertemuan"
+              placeholder="Total Pertemuan"
+              required
+              class="p-2 border rounded w-40"
             />
             <button
               type="submit"
-              class="col-span-3 mt-2 px-4 py-2 bg-purple-600 text-white rounded"
+              class="px-4 py-2 bg-purple-600 text-white rounded"
             >
               Tambah
             </button>
@@ -113,6 +120,7 @@
                 <th class="py-2">Kode</th>
                 <th class="py-2">Nama Mata Kuliah</th>
                 <th class="py-2">Jurusan</th>
+                <th class="py-2">Total Pertmuan</th>
                 <th class="py-2">Aksi</th>
               </tr>
             </thead>
@@ -122,6 +130,7 @@
                 <td class="py-2">{{ mk.kode }}</td>
                 <td>{{ mk.nama }}</td>
                 <td>{{ mk.jurusan }}</td>
+                <td>{{ mk.totalPertemuan }}</td>
                 <td>
                   <form
                     method="POST"

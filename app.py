@@ -209,11 +209,19 @@ def tambah_mata_kuliah():
     kode = request.form['kode']
     nama = request.form['nama']
     jurusan = request.form['jurusan']
-
+    pertemuan = request.form['totalPertemuan']
+    try:
+        total_pertemuan = int(pertemuan)
+    except ValueError:
+        return render_template(
+            'admin_data_matkul.html',
+            error="Total pertemuan harus berupa angka."
+        )
     mk = {
         'kode': kode,
         'nama': nama,
-        'jurusan': jurusan
+        'jurusan': jurusan,
+        'totalPertemuan': total_pertemuan,
     }
     db.mata_kuliah.insert_one(mk)
     return redirect(url_for('data_mata_kuliah'))
