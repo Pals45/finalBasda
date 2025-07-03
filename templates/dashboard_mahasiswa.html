@@ -75,30 +75,16 @@
               </tr>
             </thead>
             <tbody>
+              {% for jadwal in jadwal_list %}
               <tr class="border-b hover:bg-gray-50">
-                <td class="py-2">Pemrograman Web</td>
-                <td>Senin</td>
-                <td>09:00 - 11:00</td>
-                <td>Bapak Yusuf</td>
+                <td class="py-2">{{ jadwal.mata_praktikum }}</td>
+                <td>{{ jadwal.hari }}</td>
+                <td>{{ jadwal.jam }}</td>
+                <td>{{ jadwal.dosen }}</td>
               </tr>
-              <tr class="hover:bg-gray-50">
-                <td class="py-2">Jaringan Komputer</td>
-                <td>Rabu</td>
-                <td>13:00 - 15:00</td>
-                <td>Ibu Sari</td>
-              </tr>
+              {% endfor %}
             </tbody>
           </table>
-        </section>
-        <section class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-xl font-semibold mb-4">Progress Laporan</h2>
-          <div class="bg-gray-200 rounded-full h-4 mb-2 w-full">
-            <div
-              class="bg-purple-600 h-4 rounded-full"
-              style="width: 60%"
-            ></div>
-          </div>
-          <p class="text-sm text-gray-600">60% selesai</p>
         </section>
       </main>
     </div>

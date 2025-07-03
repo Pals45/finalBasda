@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Laporan Mahasiswa</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dist/output.css') }}"
+    />
+  </head>
+  <body class="bg-gray-200 text-gray-800 min-h-screen">
+    <div class="flex">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow-md h-screen fixed">
+        <div class="p-6 border-b">
+          <h2 class="text-2xl font-bold text-purple-700">Dosen</h2>
+          <p class="mt-1 text-sm text-gray-500">Panel Bimbingan</p>
+        </div>
+        <nav class="px-4 py-4 space-y-2">
+          <a
+            href="{{ url_for('dosen_dashboard') }}"
+            class="block py-2 px-4 rounded transition duration-200 hover:bg-purple-100 hover:text-purple-700"
+            >Jadwal Mengajar</a
+          >
+          <a
+            href="#"
+            class="block py-2 px-4 rounded transition duration-200 hover:bg-purple-100 hover:text-purple-700"
+            >Daftar Mahasiswa</a
+          >
+          <a
+            href="{{ url_for('list_kehadiran') }}"
+            class="block py-2 px-4 rounded transition duration-200 bg-purple-100 text-purple-700 font-semibold"
+            >Validasi Kehadiran</a
+          >
+          <a
+            href="{{ url_for('upload_tugas') }}"
+            class="block py-2 px-4 rounded hover:bg-purple-100 hover:text-purple-700"
+            >Laporan/Tugas</a
+          >
+          <a
+            href="{{ url_for('daftar_tugas') }}"
+            class="block py-2 px-4 rounded hover:bg-purple-100 hover:text-purple-700"
+            >Daftar Kumpul</a
+          >
+          <a
+            href="{{ url_for('logout') }}"
+            class="block py-2 px-4 text-red-500 hover:bg-red-100 transition duration-200"
+            >Logout</a
+          >
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="ml-64 flex-1 p-8">
+        <form method="GET" class="mb-4">
+  <label for="matkul" class="block mb-1 text-sm font-medium">Filter Mata Kuliah</label>
+  <select name="matkul" id="matkul" onchange="this.form.submit()" class="w-full md:w-1/2 px-3 py-2 border rounded">
+    <option value="">-- Semua Mata Kuliah --</option>
+    {% for matkul in daftar_matkul %}
+      <option value="{{ matkul.nama }}" {% if selected_matkul == matkul.nama %}selected{% endif %}>
+        {{ matkul.nama }}
+      </option>
+    {% endfor %}
+  </select>
+</form>
+
+<table class="w-full table-auto bg-white shadow rounded">
+  <thead class="bg-gray-100 text-left text-sm">
+    <tr>
+      <th class="py-2 px-4">Nama</th>
+      <th class="py-2 px-4">Tanggal</th>
+      <th class="py-2 px-4">Mata Kuliah</th>
+      <th class="py-2 px-4">Pertemuan</th>
+      <th class="py-2 px-4">Status</th>
+      <th class="py-2 px-4">Verifikasi</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for hadir in kehadiran %}
+    <tr class="border-t hover:bg-gray-50">
+      <td class="px-4 py-2">{{ hadir.email }}</td>
+      <td class="px-4 py-2">{{ hadir.tanggal }}</td>
+      <td class="px-4 py-2">{{ hadir.matkul }}</td>
+      <td class="px-4 py-2">{{ hadir.pertemuan }}</td>
+      <td class="px-4 py-2">{{ hadir.status }}</td>
+      <td class="px-4 py-2">
+        {% if hadir.verifikasi == 'Terverifikasi' %}
+          <span class="text-green-600 font-semibold">✔ Terverifikasi</span>
+        {% else %}
+          <form action="{{ url_for('verifikasi_kehadiran', kehadiran_id=hadir._id) }}" method="POST">
+            <button class="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm">
+              Verifikasi
+            </button>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+      </main>
+    </div>
+  </body>
+</html>
