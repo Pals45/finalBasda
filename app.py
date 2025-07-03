@@ -161,6 +161,7 @@ def data_dosen():
 def tambah_dosen():
     # Untuk saat ini hanya redirect ulang, simpan data di database jika ingin dinamis
     return redirect(url_for('data_dosen'))
+
 @app.route('/admin/mata-kuliah')
 def data_mata_kuliah():
     if session.get('role') != 'admin':
@@ -168,6 +169,7 @@ def data_mata_kuliah():
 
     mata_kuliah = db.mata_kuliah.find()
     return render_template('admin_data_matkul.html', mata_kuliah=mata_kuliah)
+    
 @app.route('/admin/tambah-mata-kuliah', methods=['POST'])
 def tambah_mata_kuliah():
     if session.get('role') != 'admin':
