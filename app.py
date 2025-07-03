@@ -61,13 +61,23 @@ def logout():
 def mahasiswa_dashboard():
     if session.get('role') != 'Mahasiswa':
         return redirect(url_for('home'))
-    return render_template('dashboard_mahasiswa.html')
+    jadwal = db.schedule.find()
+    return render_template('dashboard_mahasiswa.html',jadwal_list=jadwal)
 
 @app.route('/mahasiswa/progress')
 def mahasiswa_progress():
     if session.get('role') != 'Mahasiswa':
         return redirect(url_for('home'))
-    return render_template('dashboard_mahasiswa_progress.html')
+
+    laporan_list = list(db.tugas_collection.find())
+    
+    # Gunakan salah satu tugas untuk parameter `tugas_id` sementara
+    tugas = laporan_list[0] if laporan_list else None
+
+    return render_template('dashboard_mahasiswa_progress.html',
+                           laporan_list=laporan_list,
+                           tugas=tugas)
+
 @app.route('/dosen')
 def dosen_dashboard():
     if session.get('role') != 'Dosen':
@@ -76,18 +86,22 @@ def dosen_dashboard():
 
 @app.route('/upload_tugas', methods=['GET', 'POST'])
 def upload_tugas():
-    if request.method == 'POST':
+    if request.method == 'POST':    
         judul = request.form['judul']
         deadline = request.form['deadline']
+        mata_kuliah_id = request.form['mata_kuliah_id']
+        pertemuan = request.form['pertemuan']
+        catatan = request.form['catatan']
         file = request.files['file']
-        
-        # Simpan file ke GridFS
+
         file_id = fs.put(file, filename=file.filename, content_type=file.content_type)
 
-        # Simpan metadata tugas ke koleksi biasa
         db.tugas_collection.insert_one({
             'judul': judul,
             'deadline': deadline,
+            'mata_kuliah_id': ObjectId(mata_kuliah_id),
+            'pertemuan': pertemuan,
+            'catatan': catatan,
             'file_id': file_id,
             'filename': file.filename
         })
@@ -95,12 +109,13 @@ def upload_tugas():
         return redirect(url_for('upload_tugas'))
 
     # Ambil daftar tugas
-    
-    return render_template('dashboard_dosen_laporan.html')
+    matakuliah_list = db.mata_kuliah.find()    
+    return render_template('dashboard_dosen_laporan.html',mata_kuliah_list=matakuliah_list)
 @app.route('/daftar_tugas', methods=['GET', 'POST'])
 def daftar_tugas():
+    laporan=db.laporan_mahasiswa.find()
     
-    return render_template('dashboard_dosen_daftar_tugas.html')
+    return render_template('dashboard_dosen_daftar_tugas.html',laporan=laporan)
 
 # Route untuk akses file
 @app.route('/uploads/<filename>')
@@ -141,28 +156,35 @@ def mahasiswa_kehadiran():
         total_izin=total_izin,
         total_alpha=total_alpha
     )
-@app.route('/tugas/upload/<tugas_id>', methods=['GET', 'POST'])
-def upload_tugas_mahasiswa(tugas_id):
+@app.route('/mahasiswa/upload-tugas', methods=['GET', 'POST'])
+def upload_tugas_mahasiswa():
     if session.get('role') != 'Mahasiswa':
         return redirect(url_for('home'))
 
-    tugas = db.tugas.find_one({'_id': ObjectId(tugas_id)})
     if request.method == 'POST':
-        file_jawaban = request.form['file_jawaban']  # asumsi pakai URL / filename
-        catatan = request.form['catatan']
+        nama = request.form['nama']
+        pertemuan = request.form['laporan']
+        file = request.files['file']
 
-        db.pengumpulan_tugas.insert_one({
-            'tugas_id': ObjectId(tugas_id),
-            'mahasiswa_id': session['user_id'],
-            'file_jawaban': file_jawaban,
-            'catatan': catatan,
-            'waktu_upload': datetime.utcnow()
+        # Simpan file ke GridFS
+        file_id = fs.put(file, filename=file.filename, content_type=file.content_type)
+
+        # Simpan metadata
+        db.laporan_mahasiswa.insert_one({
+            'nama': nama,
+            'pertemuan': pertemuan,
+            'file_id': file_id,
+            'filename': file.filename,
+            'status': 'Menunggu',
+            'catatan': '',
+            'uploaded_at': datetime.utcnow()
         })
 
-        flash('Tugas berhasil diunggah.')
-        return redirect(url_for('daftar_tugas_mahasiswa'))
+        flash('Laporan berhasil diupload.')
+        return redirect(url_for('mahasiswa_progress'))
 
-    return render_template('dashboard_mahasiswa_progress.html', tugas=tugas)
+    return render_template('dashboard_mahasiswa_upload_tugas.html')
+
 
 @app.route('/mahasiswa/absen', methods=['POST'])
 def absen_mahasiswa():
@@ -175,6 +197,7 @@ def absen_mahasiswa():
         'matkul': request.form['matkul'],
         'pertemuan': request.form['pertemuan'],
         'status': request.form['keterangan'],
+        'verifikasi':'belum verifikasi',
         'waktu_absen': datetime.utcnow()
     }
 
@@ -183,6 +206,7 @@ def absen_mahasiswa():
         'email': data['email'],
         'tanggal': data['tanggal'],
         'matkul': data['matkul'],
+        'verifikasi':'belum verifikasi',
         'pertemuan': data['pertemuan']
     })
 
@@ -397,6 +421,40 @@ def add_user_dosen():
         return redirect(url_for('data_dosen'))
 
     return render_template('admin_data_dosen.html')
+@app.route('/dosen/kehadiran', methods=['GET', 'POST'])
+def list_kehadiran():
+    if session.get('role') != 'Dosen':
+        return redirect(url_for('home'))
+
+    # Ambil daftar mata kuliah untuk dropdown
+    daftar_matkul = list(db.mata_kuliah.find())
+
+    selected_matkul = request.args.get('matkul')
+    filter_query = {}
+    if selected_matkul:
+        filter_query['matkul'] = selected_matkul
+
+    kehadiran = list(db.kehadiran.find(filter_query))
+
+    return render_template(
+        'dashboard_dosen_verifikasi.html',
+        daftar_matkul=daftar_matkul,
+        selected_matkul=selected_matkul,
+        kehadiran=kehadiran
+    )
+
+
+@app.route('/dosen/verifikasi_kehadiran/<kehadiran_id>', methods=['POST'])
+def verifikasi_kehadiran(kehadiran_id):
+    if session.get('role') != 'Dosen':
+        return redirect(url_for('home'))
+
+    db.kehadiran.update_one(
+        {'_id': ObjectId(kehadiran_id)},
+        {'$set': {'verifikasi': 'Terverifikasi'}}
+    )
+    flash('Kehadiran berhasil diverifikasi.')
+    return redirect(request.referrer or url_for('list_kehadiran'))
 
 
 if __name__ == '__main__':

@@ -29,7 +29,7 @@
             >Daftar Mahasiswa</a
           >
           <a
-            href="#"
+            href="{{ url_for('list_kehadiran') }}"
             class="block py-2 px-4 rounded transition duration-200 hover:bg-purple-100 hover:text-purple-700"
             >Validasi Kehadiran</a
           >
@@ -69,7 +69,7 @@
                 </tr>
               </thead>
               <tbody>
-                {% for tugas in tugas_dosen %}
+                {% for tugas in laporan %}
                 <tr class="border-b hover:bg-gray-50">
                   <td class="py-3 px-4 font-medium">{{ tugas.judul }}</td>
                   <td class="py-3 px-4">{{ tugas.deadline }}</td>

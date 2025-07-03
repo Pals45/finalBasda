@@ -29,7 +29,7 @@
             >Daftar Mahasiswa</a
           >
           <a
-            href="#"
+            href="{{ url_for('list_kehadiran') }}"
             class="block py-2 px-4 rounded transition duration-200 hover:bg-purple-100 hover:text-purple-700"
             >Validasi Kehadiran</a
           >
@@ -72,6 +72,7 @@
                   class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
+
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1"
                   >Deadline</label
@@ -84,6 +85,55 @@
                 />
               </div>
             </div>
+
+            <!-- Dropdown Mata Kuliah -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Mata Kuliah</label
+              >
+              <select
+                name="mata_kuliah_id"
+                required
+                class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="">-- Pilih Mata Kuliah --</option>
+                {% for mk in mata_kuliah_list %}
+                <option value="{{ mk._id }}">{{ mk.nama }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Dropdown Pertemuan -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Pertemuan</label
+              >
+              <select
+                name="pertemuan"
+                required
+                class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="">-- Pilih Pertemuan --</option>
+                {% for i in range(1, 17) %}
+                <option value="Pertemuan {{ i }}">Pertemuan {{ i }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Catatan -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Catatan</label
+              >
+              <textarea
+                name="catatan"
+                rows="3"
+                class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Contoh: Sertakan referensi atau panduan praktikum..."
+              ></textarea>
+            </div>
+
+            <!-- Upload File -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1"
                 >Unggah File (PDF, Gambar, PPT)</label
@@ -96,6 +146,7 @@
                 class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
+
             <div class="text-right">
               <button
                 type="submit"
