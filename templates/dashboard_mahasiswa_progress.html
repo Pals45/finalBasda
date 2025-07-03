@@ -70,8 +70,8 @@
                 <th class="py-2">Mata Kuliah</th>
                 <th class="py-2">Pertemuan</th>
                 <th class="py-2">Deadline</th>
-                <th class="py-2">Catatan</th>
                 <th class="py-2">File</th>
+                <th class="py-2">Catatan</th>
                 <th class="py-2">Aksi</th>
               </tr>
             </thead>
@@ -82,8 +82,16 @@
                 <!-- Tambahan -->
                 <td>{{ laporan.pertemuan }}</td>
                 <td>{{ laporan.deadline }}</td>
-                
-                <td>{{ laporan.catatan or "-" }}</td>
+                <td>
+                  <a
+                    href="{{ url_for('lihat_file', file_id=laporan.file_id) }}"
+                    target="_blank"
+                    class="text-blue-600 hover:underline"
+                  >
+                    Lihat File
+                  </a>
+                </td>
+                <td class="py-2">{{ laporan.catatan or "-" }}</td>
                 <td class="py-2">
                   <a
                     href="{{ url_for('upload_tugas_mahasiswa', tugas_id=laporan._id) }}"

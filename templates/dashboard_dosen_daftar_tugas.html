@@ -14,8 +14,8 @@
       <!-- Sidebar -->
       <aside class="w-64 bg-white shadow-md h-screen fixed">
         <div class="p-6 border-b">
-         <h2 class="text-2xl font-bold text-purple-700"> Asisten Dosen</h2>
-          <p class="mt-1 text-sm text-gray-500">Panel Bimbingan</p>
+          <h2 class="text-2xl font-bold text-purple-700">Asisten Dosen</h2>
+          <p class="mt-1 text-sm text-gray-500">Panel Praktikum</p>
         </div>
         <nav class="px-4 py-4 space-y-2">
           <a
@@ -53,28 +53,29 @@
           <h2 class="text-xl font-semibold text-purple-700 mb-4">
             Daftar Tugas yang Diunggah
           </h2>
-          {% if tugas_dosen %}
+          {% if laporan %}
           <div class="overflow-x-auto">
             <table class="w-full text-sm text-left border-t">
               <thead class="text-gray-600 bg-gray-100">
                 <tr>
-                  <th class="py-3 px-4">Judul</th>
-                  <th class="py-3 px-4">Deadline</th>
+                  <th class="py-3 px-4">Nama</th>
+                  <th class="py-3 px-4">Pertemuan</th>
                   <th class="py-3 px-4">File</th>
                 </tr>
               </thead>
               <tbody>
                 {% for tugas in laporan %}
                 <tr class="border-b hover:bg-gray-50">
-                  <td class="py-3 px-4 font-medium">{{ tugas.judul }}</td>
-                  <td class="py-3 px-4">{{ tugas.deadline }}</td>
-                  <td class="py-3 px-4">
+                  <td class="py-3 px-4 font-medium">{{ tugas.nama }}</td>
+                  <td class="py-3 px-4">{{ tugas.pertemuan }}</td>
+                  <td>
                     <a
-                      href="{{ url_for('uploaded_file', filename=tugas.filename) }}"
-                      class="text-blue-600 hover:underline"
+                      href="{{ url_for('lihat_file', file_id=tugas.file_id) }}"
                       target="_blank"
-                      >Lihat File</a
+                      class="text-blue-600 hover:underline"
                     >
+                      Lihat File
+                    </a>
                   </td>
                 </tr>
                 {% endfor %}

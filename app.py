@@ -70,8 +70,15 @@ def mahasiswa_progress():
         return redirect(url_for('home'))
 
     laporan_list = list(db.tugas_collection.find())
-    
-    # Gunakan salah satu tugas untuk parameter `tugas_id` sementara
+
+    for tugas in laporan_list:
+        mk_id = tugas.get('mata_kuliah_id')
+        if isinstance(mk_id, str):
+            mk_id = ObjectId(mk_id)
+
+        matkul = db.mata_kuliah.find_one({'_id': mk_id})
+        tugas['nama_matkul'] = matkul['nama'] if matkul else 'Tidak diketahui'
+
     tugas = laporan_list[0] if laporan_list else None
 
     return render_template('dashboard_mahasiswa_progress.html',
@@ -128,9 +135,9 @@ def upload_tugas():
     )
 @app.route('/daftar_tugas', methods=['GET', 'POST'])
 def daftar_tugas():
-    laporan=db.laporan_mahasiswa.find()
-    
-    return render_template('dashboard_dosen_daftar_tugas.html',laporan=laporan)
+    laporan = list(db.laporan_mahasiswa.find())  # Ubah cursor jadi list
+    return render_template('dashboard_dosen_daftar_tugas.html', laporan=laporan)
+
 
 # Route untuk akses file
 @app.route('/uploads/<filename>')
@@ -325,7 +332,6 @@ def edit_jadwal(id):
 def hapus_jadwal(id):
     if session.get('role') != 'admin':
         return redirect(url_for('home'))
-
     db.schedule.delete_one({'_id': ObjectId(id)})
     flash('Jadwal berhasil dihapus.')
     return redirect(url_for('admin_dashboard'))
@@ -465,7 +471,16 @@ def list_kehadiran():
         selected_matkul=selected_matkul,
         kehadiran=kehadiran
     )
-
+@app.route('/lihat-file/<file_id>')
+def lihat_file(file_id):
+    try:
+        file = fs.get(ObjectId(file_id))
+        return file.read(), 200, {
+            'Content-Type': file.content_type,
+            'Content-Disposition': f'inline; filename="{file.filename}"'
+        }
+    except Exception as e:
+        return f"File tidak ditemukan: {e}", 404
 
 @app.route('/dosen/verifikasi_kehadiran/<kehadiran_id>', methods=['POST'])
 def verifikasi_kehadiran(kehadiran_id):
