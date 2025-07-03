@@ -20,12 +20,8 @@ UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Dummy user untuk login
-users = {
-    'admin': {'username': 'admin', 'password': 'admin123', 'role': 'admin'},
-    'mahasiswa': {'username': 'mahasiswa', 'password': 'mhs123', 'role': 'mahasiswa'},
-    'dosen': {'username': 'dosen', 'password': 'dsn123', 'role': 'dosen'}
-}
+
+
 
 @app.route('/')
 def home():
@@ -33,19 +29,28 @@ def home():
 
 @app.route('/login', methods=['POST'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
-    for user in users.values():
-        if user['username'] == username and user['password'] == password:
-            session['username'] = username
-            session['role'] = user['role']
-            if user['role'] == 'admin':
-                return redirect(url_for('admin_dashboard'))
-            elif user['role'] == 'mahasiswa':
-                return redirect(url_for('mahasiswa_dashboard'))
-            elif user['role'] == 'dosen':
-                return redirect(url_for('dosen_dashboard'))
-    return render_template('login.html', error="Username atau password salah")
+    print("===== DEBUG POST DATA =====")
+    print(request.form)
+    print("============================")
+
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    user = db.users.find_one({'email': email, 'passwordHash': password})
+    print(user)
+    if user:
+        session['email'] = email
+        session['role'] = user['role']
+        if user['role'] == 'admin':
+            return redirect(url_for('admin_dashboard'))
+        elif user['role'] == 'Mahasiswa':
+            return redirect(url_for('mahasiswa_dashboard'))
+        elif user['role'] == 'Dosen':
+            return redirect(url_for('dosen_dashboard'))
+
+    return render_template('login.html', error="Email atau password salah")
+
+
 
 @app.route('/logout')
 def logout():
@@ -54,20 +59,20 @@ def logout():
 
 @app.route('/mahasiswa')
 def mahasiswa_dashboard():
-    if session.get('role') != 'mahasiswa':
+    if session.get('role') != 'Mahasiswa':
         return redirect(url_for('home'))
     return render_template('dashboard_mahasiswa.html')
 
 @app.route('/mahasiswa/progress')
 def mahasiswa_progress():
-    if session.get('role') != 'mahasiswa':
+    if session.get('role') != 'Mahasiswa':
         return redirect(url_for('home'))
     return render_template('dashboard_mahasiswa_progress.html')
 
 
 @app.route('/dosen')
 def dosen_dashboard():
-    if session.get('role') != 'dosen':
+    if session.get('role') != 'Dosen':
         return redirect(url_for('home'))
     return render_template('dashboard_dosen.html')
 
